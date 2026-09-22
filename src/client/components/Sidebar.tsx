@@ -126,7 +126,7 @@ export function Sidebar({ projectId, onNavigate, onClose }: SidebarProps) {
     <div className="flex h-full w-60 flex-col bg-base-200">
       <div className="flex items-center justify-between px-4 pb-2 pt-3">
         <Link
-          to="/"
+          to="/app"
           onClick={onNavigate}
           className="text-base font-semibold text-base-content"
         >

@@ -54,7 +54,7 @@ function useProjectAccessRedirect(projectId: string) {
       });
       return;
     }
-    void navigate({ to: "/", replace: true });
+    void navigate({ to: "/app", replace: true });
   }, [error, navigate]);
 }
 

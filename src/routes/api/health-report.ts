@@ -1,19 +1,29 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { waitUntil } from "cloudflare:workers";
 import { asAppError } from "@/server/lib/errors";
 import { runQuickAudit } from "@/server/lib/audit/quick-audit";
 import {
   normalizeAndValidateStartUrl,
   resolveStartUrlRedirects,
 } from "@/server/lib/audit/url-policy";
+import { saveHealthReport } from "@/server/features/health-report/report-store";
+import { sendHealthReportEmail } from "@/server/features/health-report/report-email";
+import {
+  guardPublicPost,
+  jsonResponse as json,
+} from "@/server/features/health-report/abuse";
 import { buildHealthReport } from "@/shared/health-report";
 import { healthReportRequestSchema } from "@/types/schemas/health-report";
 
-// Public, unauthenticated endpoint for the single-click SEO Health Report.
-// Runs a bounded (≤50 page, time-limited) same-origin crawl reusing the audit
-// engine's analysis layer, then returns a plain-Turkish health scorecard.
-// No auth, no project, no billing, and no DataForSEO — it only fetches the
-// target site's own pages. SSRF is enforced by normalizeAndValidateStartUrl.
+// Public, unauthenticated endpoint for the single-click SEO health report.
+// Runs a bounded same-origin crawl (≤50 pages, time-limited), stores the
+// result for sharing, optionally emails it, and returns a plain-Turkish
+// scorecard. No auth, no project, no billing, no DataForSEO. SSRF is enforced
+// by normalizeAndValidateStartUrl; abuse is bounded by guardPublicPost.
 async function handleHealthReport(request: Request): Promise<Response> {
+  const blocked = await guardPublicPost(request);
+  if (blocked) return blocked;
+
   let body: unknown;
   try {
     body = await request.json();
@@ -25,7 +35,6 @@ async function handleHealthReport(request: Request): Promise<Response> {
   if (!parsed.success) {
     return json({ error: "Lütfen geçerli bir alan adı girin." }, 400);
   }
-
   const { domain, email } = parsed.data;
 
   let startUrl: string;
@@ -34,8 +43,7 @@ async function handleHealthReport(request: Request): Promise<Response> {
       await normalizeAndValidateStartUrl(domain),
     );
   } catch (error) {
-    const appError = asAppError(error);
-    if (appError?.code === "CRAWL_TARGET_BLOCKED") {
+    if (asAppError(error)?.code === "CRAWL_TARGET_BLOCKED") {
       return json(
         { error: "Bu adres taranamaz (özel/engelli bir hedef)." },
         400,
@@ -44,13 +52,6 @@ async function handleHealthReport(request: Request): Promise<Response> {
     return json(
       { error: "Geçerli bir alan adı girin (ör. example.com)." },
       400,
-    );
-  }
-
-  // MVP: capture the optional email as a log line only; no email is sent.
-  if (email) {
-    console.info(
-      `[health-report] lead email captured for ${startUrl}: ${email}`,
     );
   }
 
@@ -63,7 +64,18 @@ async function handleHealthReport(request: Request): Promise<Response> {
       truncated: audit.truncated,
       issues: audit.issues,
     });
-    return json(report, 200);
+
+    const trimmedEmail = email?.trim() || null;
+    const id = await saveHealthReport(report, trimmedEmail);
+
+    if (trimmedEmail) {
+      const shareUrl = `${new URL(request.url).origin}/report/${id}`;
+      waitUntil(
+        sendHealthReportEmail({ email: trimmedEmail, report, shareUrl }),
+      );
+    }
+
+    return json({ ...report, id }, 200);
   } catch (error) {
     console.error("[health-report] audit failed:", error);
     return json(
@@ -71,13 +83,6 @@ async function handleHealthReport(request: Request): Promise<Response> {
       500,
     );
   }
-}
-
-function json(data: unknown, status: number): Response {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { "Content-Type": "application/json" },
-  });
 }
 
 export const Route = createFileRoute("/api/health-report")({

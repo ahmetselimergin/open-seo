@@ -177,7 +177,7 @@ function InvitationCard({
           >
             Use a different account
           </button>
-          <Link to="/" className="btn btn-ghost w-full">
+          <Link to="/app" className="btn btn-ghost w-full">
             Go to dashboard
           </Link>
         </div>
@@ -195,7 +195,7 @@ function InvitationCard({
           </span>
           .
         </p>
-        <Link to="/" className="btn btn-ghost w-full">
+        <Link to="/app" className="btn btn-ghost w-full">
           Go to dashboard
         </Link>
       </AuthPageCard>

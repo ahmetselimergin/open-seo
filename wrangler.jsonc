@@ -94,8 +94,9 @@
   ],
   "triggers": {
     // Every 5 min: rank checks + stale-audit reconcile. Daily: OAuth KV GC.
+    // Weekly (Mon 08:00): mySeo health-report monitoring re-scan.
     // Dispatched on controller.cron in src/server.ts `scheduled`.
-    "crons": ["*/5 * * * *", "17 3 * * *"],
+    "crons": ["*/5 * * * *", "17 3 * * *", "0 8 * * 1"],
   },
   // This config serves local dev and Docker self-host only. All Cloudflare
   // deployments — previews, prod, self-host — go through Alchemy
@@ -144,6 +145,15 @@
     {
       "bucket_name": "open-seo",
       "binding": "R2",
+    },
+  ],
+  // Per-IP abuse bound for the public mySeo health-report endpoint (a crawl the
+  // caller doesn't pay for). 5 scans / minute / IP.
+  "ratelimits": [
+    {
+      "name": "HEALTH_REPORT_RATE_LIMIT",
+      "namespace_id": "2001",
+      "simple": { "limit": 5, "period": 60 },
     },
   ],
 }

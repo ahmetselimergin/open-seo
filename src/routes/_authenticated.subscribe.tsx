@@ -311,7 +311,7 @@ function SubscribePage() {
           <button
             type="button"
             className="inline-flex cursor-pointer items-center gap-1.5 text-sm font-medium text-base-content/70 hover:text-base-content transition-colors"
-            onClick={() => void navigate({ to: "/", replace: true })}
+            onClick={() => void navigate({ to: "/app", replace: true })}
           >
             <ArrowRight className="size-3.5 rotate-180" />
             Back to app

@@ -151,8 +151,8 @@ function DangerSection({
       if (getLastProjectId() === project.id) clearLastProjectId();
       await queryClient.invalidateQueries({ queryKey: ["projects"] });
       toast.success("Project archived");
-      // Re-resolve to a remaining project via the landing redirect.
-      void navigate({ to: "/" });
+      // Re-resolve to a remaining project via the workspace redirect.
+      void navigate({ to: "/app" });
     },
     onError: (error) =>
       toast.error(getStandardErrorMessage(error, "Failed to archive project")),

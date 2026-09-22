@@ -18,7 +18,8 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as ProjectRouteRouteImport } from './routes/_project/route'
 import { Route as AppRouteRouteImport } from './routes/_app/route'
-import { Route as AppIndexRouteImport } from './routes/_app/index'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as ReportIdRouteImport } from './routes/report.$id'
 import { Route as RReportIdRouteImport } from './routes/r/$reportId'
 import { Route as ApiHealthReportRouteImport } from './routes/api/health-report'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
@@ -32,6 +33,7 @@ import { Route as AppSupportRouteImport } from './routes/_app/support'
 import { Route as AppSettingsRouteImport } from './routes/_app/settings'
 import { Route as AppProjectsRouteImport } from './routes/_app/projects'
 import { Route as AppBillingRouteImport } from './routes/_app/billing'
+import { Route as AppAppRouteImport } from './routes/_app/app'
 import { Route as AppAiRouteImport } from './routes/_app/ai'
 import { Route as Char91DotwellKnownChar93OpenaiAppsChallengeRouteImport } from './routes/[.well-known]/openai-apps-challenge'
 import { Route as STokenIndexRouteImport } from './routes/s/$token/index'
@@ -39,6 +41,9 @@ import { Route as AuthenticatedOnboardingIndexRouteImport } from './routes/_auth
 import { Route as AppSettingsIndexRouteImport } from './routes/_app/settings/index'
 import { Route as STokenRawRouteImport } from './routes/s/$token/raw'
 import { Route as STokenOgDotpngRouteImport } from './routes/s/$token/og[.]png'
+import { Route as ReportIdOgDotpngRouteImport } from './routes/report.$id.og[.]png'
+import { Route as ApiHealthReportMonitorRouteImport } from './routes/api/health-report.monitor'
+import { Route as ApiHealthReportIdRouteImport } from './routes/api/health-report.$id'
 import { Route as ApiAutumnSplatRouteImport } from './routes/api/autumn/$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AppSettingsOrganizationRouteImport } from './routes/_app/settings/organization'
@@ -46,6 +51,7 @@ import { Route as AppHelpOpenrouterApiKeyRouteImport } from './routes/_app/help/
 import { Route as AppHelpDataforseoApiKeyRouteImport } from './routes/_app/help/dataforseo-api-key'
 import { Route as ProjectPProjectIdRouteRouteImport } from './routes/_project/p/$projectId/route'
 import { Route as ProjectPProjectIdIndexRouteImport } from './routes/_project/p/$projectId/index'
+import { Route as ApiHealthReportMonitorUnsubscribeRouteImport } from './routes/api/health-report.monitor.unsubscribe'
 import { Route as ApiGscOauthCallbackRouteImport } from './routes/api/gsc/oauth/callback'
 import { Route as ApiGa4OauthCallbackRouteImport } from './routes/api/ga4/oauth/callback'
 import { Route as ProjectPProjectIdSettingsRouteImport } from './routes/_project/p/$projectId/settings'
@@ -112,10 +118,15 @@ const AppRouteRoute = AppRouteRouteImport.update({
   id: '/_app',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppIndexRoute = AppIndexRouteImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AppRouteRoute,
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportIdRoute = ReportIdRouteImport.update({
+  id: '/report/$id',
+  path: '/report/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const RReportIdRoute = RReportIdRouteImport.update({
   id: '/r/$reportId',
@@ -183,6 +194,11 @@ const AppBillingRoute = AppBillingRouteImport.update({
   path: '/billing',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppAppRoute = AppAppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppAiRoute = AppAiRouteImport.update({
   id: '/ai',
   path: '/ai',
@@ -220,6 +236,21 @@ const STokenOgDotpngRoute = STokenOgDotpngRouteImport.update({
   path: '/s/$token/og.png',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReportIdOgDotpngRoute = ReportIdOgDotpngRouteImport.update({
+  id: '/og.png',
+  path: '/og.png',
+  getParentRoute: () => ReportIdRoute,
+} as any)
+const ApiHealthReportMonitorRoute = ApiHealthReportMonitorRouteImport.update({
+  id: '/monitor',
+  path: '/monitor',
+  getParentRoute: () => ApiHealthReportRoute,
+} as any)
+const ApiHealthReportIdRoute = ApiHealthReportIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiHealthReportRoute,
+} as any)
 const ApiAutumnSplatRoute = ApiAutumnSplatRouteImport.update({
   id: '/api/autumn/$',
   path: '/api/autumn/$',
@@ -255,6 +286,12 @@ const ProjectPProjectIdIndexRoute = ProjectPProjectIdIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ProjectPProjectIdRouteRoute,
 } as any)
+const ApiHealthReportMonitorUnsubscribeRoute =
+  ApiHealthReportMonitorUnsubscribeRouteImport.update({
+    id: '/unsubscribe',
+    path: '/unsubscribe',
+    getParentRoute: () => ApiHealthReportMonitorRoute,
+  } as any)
 const ApiGscOauthCallbackRoute = ApiGscOauthCallbackRouteImport.update({
   id: '/api/gsc/oauth/callback',
   path: '/api/gsc/oauth/callback',
@@ -395,7 +432,7 @@ const ProjectPProjectIdAuditIssuesResultIdRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof AppIndexRoute
+  '/': typeof IndexRoute
   '/auth-error': typeof AuthErrorRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/health-report': typeof HealthReportRoute
@@ -403,6 +440,7 @@ export interface FileRoutesByFullPath {
   '/verify-email': typeof VerifyEmailRoute
   '/.well-known/openai-apps-challenge': typeof Char91DotwellKnownChar93OpenaiAppsChallengeRoute
   '/ai': typeof AppAiRoute
+  '/app': typeof AppAppRoute
   '/billing': typeof AppBillingRoute
   '/projects': typeof AppProjectsRoute
   '/settings': typeof AppSettingsRouteWithChildren
@@ -414,14 +452,18 @@ export interface FileRoutesByFullPath {
   '/subscribe': typeof AuthenticatedSubscribeRoute
   '/accept-invitation/$id': typeof AcceptInvitationIdRoute
   '/api/health': typeof ApiHealthRoute
-  '/api/health-report': typeof ApiHealthReportRoute
+  '/api/health-report': typeof ApiHealthReportRouteWithChildren
   '/r/$reportId': typeof RReportIdRoute
+  '/report/$id': typeof ReportIdRouteWithChildren
   '/p/$projectId': typeof ProjectPProjectIdRouteRouteWithChildren
   '/help/dataforseo-api-key': typeof AppHelpDataforseoApiKeyRoute
   '/help/openrouter-api-key': typeof AppHelpOpenrouterApiKeyRoute
   '/settings/organization': typeof AppSettingsOrganizationRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/autumn/$': typeof ApiAutumnSplatRoute
+  '/api/health-report/$id': typeof ApiHealthReportIdRoute
+  '/api/health-report/monitor': typeof ApiHealthReportMonitorRouteWithChildren
+  '/report/$id/og.png': typeof ReportIdOgDotpngRoute
   '/s/$token/og.png': typeof STokenOgDotpngRoute
   '/s/$token/raw': typeof STokenRawRoute
   '/settings/': typeof AppSettingsIndexRoute
@@ -441,6 +483,7 @@ export interface FileRoutesByFullPath {
   '/p/$projectId/settings': typeof ProjectPProjectIdSettingsRouteWithChildren
   '/api/ga4/oauth/callback': typeof ApiGa4OauthCallbackRoute
   '/api/gsc/oauth/callback': typeof ApiGscOauthCallbackRoute
+  '/api/health-report/monitor/unsubscribe': typeof ApiHealthReportMonitorUnsubscribeRoute
   '/p/$projectId/': typeof ProjectPProjectIdIndexRoute
   '/p/$projectId/rank-tracking/$configId': typeof ProjectPProjectIdRankTrackingConfigIdRoute
   '/p/$projectId/reports/$reportId': typeof ProjectPProjectIdReportsReportIdRoute
@@ -454,7 +497,7 @@ export interface FileRoutesByFullPath {
   '/p/$projectId/audit/issues/$resultId': typeof ProjectPProjectIdAuditIssuesResultIdRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof AppIndexRoute
+  '/': typeof IndexRoute
   '/auth-error': typeof AuthErrorRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/health-report': typeof HealthReportRoute
@@ -462,6 +505,7 @@ export interface FileRoutesByTo {
   '/verify-email': typeof VerifyEmailRoute
   '/.well-known/openai-apps-challenge': typeof Char91DotwellKnownChar93OpenaiAppsChallengeRoute
   '/ai': typeof AppAiRoute
+  '/app': typeof AppAppRoute
   '/billing': typeof AppBillingRoute
   '/projects': typeof AppProjectsRoute
   '/support': typeof AppSupportRoute
@@ -472,13 +516,17 @@ export interface FileRoutesByTo {
   '/subscribe': typeof AuthenticatedSubscribeRoute
   '/accept-invitation/$id': typeof AcceptInvitationIdRoute
   '/api/health': typeof ApiHealthRoute
-  '/api/health-report': typeof ApiHealthReportRoute
+  '/api/health-report': typeof ApiHealthReportRouteWithChildren
   '/r/$reportId': typeof RReportIdRoute
+  '/report/$id': typeof ReportIdRouteWithChildren
   '/help/dataforseo-api-key': typeof AppHelpDataforseoApiKeyRoute
   '/help/openrouter-api-key': typeof AppHelpOpenrouterApiKeyRoute
   '/settings/organization': typeof AppSettingsOrganizationRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/autumn/$': typeof ApiAutumnSplatRoute
+  '/api/health-report/$id': typeof ApiHealthReportIdRoute
+  '/api/health-report/monitor': typeof ApiHealthReportMonitorRouteWithChildren
+  '/report/$id/og.png': typeof ReportIdOgDotpngRoute
   '/s/$token/og.png': typeof STokenOgDotpngRoute
   '/s/$token/raw': typeof STokenRawRoute
   '/settings': typeof AppSettingsIndexRoute
@@ -495,6 +543,7 @@ export interface FileRoutesByTo {
   '/p/$projectId/search-performance': typeof ProjectPProjectIdSearchPerformanceRoute
   '/api/ga4/oauth/callback': typeof ApiGa4OauthCallbackRoute
   '/api/gsc/oauth/callback': typeof ApiGscOauthCallbackRoute
+  '/api/health-report/monitor/unsubscribe': typeof ApiHealthReportMonitorUnsubscribeRoute
   '/p/$projectId': typeof ProjectPProjectIdIndexRoute
   '/p/$projectId/rank-tracking/$configId': typeof ProjectPProjectIdRankTrackingConfigIdRoute
   '/p/$projectId/reports/$reportId': typeof ProjectPProjectIdReportsReportIdRoute
@@ -509,6 +558,7 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
   '/_app': typeof AppRouteRouteWithChildren
   '/_project': typeof ProjectRouteRouteWithChildren
   '/_auth': typeof AuthRouteWithChildren
@@ -520,6 +570,7 @@ export interface FileRoutesById {
   '/verify-email': typeof VerifyEmailRoute
   '/.well-known/openai-apps-challenge': typeof Char91DotwellKnownChar93OpenaiAppsChallengeRoute
   '/_app/ai': typeof AppAiRoute
+  '/_app/app': typeof AppAppRoute
   '/_app/billing': typeof AppBillingRoute
   '/_app/projects': typeof AppProjectsRoute
   '/_app/settings': typeof AppSettingsRouteWithChildren
@@ -531,15 +582,18 @@ export interface FileRoutesById {
   '/_authenticated/subscribe': typeof AuthenticatedSubscribeRoute
   '/accept-invitation/$id': typeof AcceptInvitationIdRoute
   '/api/health': typeof ApiHealthRoute
-  '/api/health-report': typeof ApiHealthReportRoute
+  '/api/health-report': typeof ApiHealthReportRouteWithChildren
   '/r/$reportId': typeof RReportIdRoute
-  '/_app/': typeof AppIndexRoute
+  '/report/$id': typeof ReportIdRouteWithChildren
   '/_project/p/$projectId': typeof ProjectPProjectIdRouteRouteWithChildren
   '/_app/help/dataforseo-api-key': typeof AppHelpDataforseoApiKeyRoute
   '/_app/help/openrouter-api-key': typeof AppHelpOpenrouterApiKeyRoute
   '/_app/settings/organization': typeof AppSettingsOrganizationRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/autumn/$': typeof ApiAutumnSplatRoute
+  '/api/health-report/$id': typeof ApiHealthReportIdRoute
+  '/api/health-report/monitor': typeof ApiHealthReportMonitorRouteWithChildren
+  '/report/$id/og.png': typeof ReportIdOgDotpngRoute
   '/s/$token/og.png': typeof STokenOgDotpngRoute
   '/s/$token/raw': typeof STokenRawRoute
   '/_app/settings/': typeof AppSettingsIndexRoute
@@ -559,6 +613,7 @@ export interface FileRoutesById {
   '/_project/p/$projectId/settings': typeof ProjectPProjectIdSettingsRouteWithChildren
   '/api/ga4/oauth/callback': typeof ApiGa4OauthCallbackRoute
   '/api/gsc/oauth/callback': typeof ApiGscOauthCallbackRoute
+  '/api/health-report/monitor/unsubscribe': typeof ApiHealthReportMonitorUnsubscribeRoute
   '/_project/p/$projectId/': typeof ProjectPProjectIdIndexRoute
   '/_project/p/$projectId/rank-tracking/$configId': typeof ProjectPProjectIdRankTrackingConfigIdRoute
   '/_project/p/$projectId/reports/$reportId': typeof ProjectPProjectIdReportsReportIdRoute
@@ -582,6 +637,7 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/.well-known/openai-apps-challenge'
     | '/ai'
+    | '/app'
     | '/billing'
     | '/projects'
     | '/settings'
@@ -595,12 +651,16 @@ export interface FileRouteTypes {
     | '/api/health'
     | '/api/health-report'
     | '/r/$reportId'
+    | '/report/$id'
     | '/p/$projectId'
     | '/help/dataforseo-api-key'
     | '/help/openrouter-api-key'
     | '/settings/organization'
     | '/api/auth/$'
     | '/api/autumn/$'
+    | '/api/health-report/$id'
+    | '/api/health-report/monitor'
+    | '/report/$id/og.png'
     | '/s/$token/og.png'
     | '/s/$token/raw'
     | '/settings/'
@@ -620,6 +680,7 @@ export interface FileRouteTypes {
     | '/p/$projectId/settings'
     | '/api/ga4/oauth/callback'
     | '/api/gsc/oauth/callback'
+    | '/api/health-report/monitor/unsubscribe'
     | '/p/$projectId/'
     | '/p/$projectId/rank-tracking/$configId'
     | '/p/$projectId/reports/$reportId'
@@ -641,6 +702,7 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/.well-known/openai-apps-challenge'
     | '/ai'
+    | '/app'
     | '/billing'
     | '/projects'
     | '/support'
@@ -653,11 +715,15 @@ export interface FileRouteTypes {
     | '/api/health'
     | '/api/health-report'
     | '/r/$reportId'
+    | '/report/$id'
     | '/help/dataforseo-api-key'
     | '/help/openrouter-api-key'
     | '/settings/organization'
     | '/api/auth/$'
     | '/api/autumn/$'
+    | '/api/health-report/$id'
+    | '/api/health-report/monitor'
+    | '/report/$id/og.png'
     | '/s/$token/og.png'
     | '/s/$token/raw'
     | '/settings'
@@ -674,6 +740,7 @@ export interface FileRouteTypes {
     | '/p/$projectId/search-performance'
     | '/api/ga4/oauth/callback'
     | '/api/gsc/oauth/callback'
+    | '/api/health-report/monitor/unsubscribe'
     | '/p/$projectId'
     | '/p/$projectId/rank-tracking/$configId'
     | '/p/$projectId/reports/$reportId'
@@ -687,6 +754,7 @@ export interface FileRouteTypes {
     | '/p/$projectId/audit/issues/$resultId'
   id:
     | '__root__'
+    | '/'
     | '/_app'
     | '/_project'
     | '/_auth'
@@ -698,6 +766,7 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/.well-known/openai-apps-challenge'
     | '/_app/ai'
+    | '/_app/app'
     | '/_app/billing'
     | '/_app/projects'
     | '/_app/settings'
@@ -711,13 +780,16 @@ export interface FileRouteTypes {
     | '/api/health'
     | '/api/health-report'
     | '/r/$reportId'
-    | '/_app/'
+    | '/report/$id'
     | '/_project/p/$projectId'
     | '/_app/help/dataforseo-api-key'
     | '/_app/help/openrouter-api-key'
     | '/_app/settings/organization'
     | '/api/auth/$'
     | '/api/autumn/$'
+    | '/api/health-report/$id'
+    | '/api/health-report/monitor'
+    | '/report/$id/og.png'
     | '/s/$token/og.png'
     | '/s/$token/raw'
     | '/_app/settings/'
@@ -737,6 +809,7 @@ export interface FileRouteTypes {
     | '/_project/p/$projectId/settings'
     | '/api/ga4/oauth/callback'
     | '/api/gsc/oauth/callback'
+    | '/api/health-report/monitor/unsubscribe'
     | '/_project/p/$projectId/'
     | '/_project/p/$projectId/rank-tracking/$configId'
     | '/_project/p/$projectId/reports/$reportId'
@@ -751,6 +824,7 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
   AppRouteRoute: typeof AppRouteRouteWithChildren
   ProjectRouteRoute: typeof ProjectRouteRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
@@ -763,8 +837,9 @@ export interface RootRouteChildren {
   Char91DotwellKnownChar93OpenaiAppsChallengeRoute: typeof Char91DotwellKnownChar93OpenaiAppsChallengeRoute
   AcceptInvitationIdRoute: typeof AcceptInvitationIdRoute
   ApiHealthRoute: typeof ApiHealthRoute
-  ApiHealthReportRoute: typeof ApiHealthReportRoute
+  ApiHealthReportRoute: typeof ApiHealthReportRouteWithChildren
   RReportIdRoute: typeof RReportIdRoute
+  ReportIdRoute: typeof ReportIdRouteWithChildren
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiAutumnSplatRoute: typeof ApiAutumnSplatRoute
   STokenOgDotpngRoute: typeof STokenOgDotpngRoute
@@ -839,12 +914,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_app/': {
-      id: '/_app/'
+    '/': {
+      id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof AppIndexRouteImport
-      parentRoute: typeof AppRouteRoute
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/report/$id': {
+      id: '/report/$id'
+      path: '/report/$id'
+      fullPath: '/report/$id'
+      preLoaderRoute: typeof ReportIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/r/$reportId': {
       id: '/r/$reportId'
@@ -937,6 +1019,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppBillingRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/_app/app': {
+      id: '/_app/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppAppRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/_app/ai': {
       id: '/_app/ai'
       path: '/ai'
@@ -986,6 +1075,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof STokenOgDotpngRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/report/$id/og.png': {
+      id: '/report/$id/og.png'
+      path: '/og.png'
+      fullPath: '/report/$id/og.png'
+      preLoaderRoute: typeof ReportIdOgDotpngRouteImport
+      parentRoute: typeof ReportIdRoute
+    }
+    '/api/health-report/monitor': {
+      id: '/api/health-report/monitor'
+      path: '/monitor'
+      fullPath: '/api/health-report/monitor'
+      preLoaderRoute: typeof ApiHealthReportMonitorRouteImport
+      parentRoute: typeof ApiHealthReportRoute
+    }
+    '/api/health-report/$id': {
+      id: '/api/health-report/$id'
+      path: '/$id'
+      fullPath: '/api/health-report/$id'
+      preLoaderRoute: typeof ApiHealthReportIdRouteImport
+      parentRoute: typeof ApiHealthReportRoute
+    }
     '/api/autumn/$': {
       id: '/api/autumn/$'
       path: '/api/autumn/$'
@@ -1034,6 +1144,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/p/$projectId/'
       preLoaderRoute: typeof ProjectPProjectIdIndexRouteImport
       parentRoute: typeof ProjectPProjectIdRouteRoute
+    }
+    '/api/health-report/monitor/unsubscribe': {
+      id: '/api/health-report/monitor/unsubscribe'
+      path: '/unsubscribe'
+      fullPath: '/api/health-report/monitor/unsubscribe'
+      preLoaderRoute: typeof ApiHealthReportMonitorUnsubscribeRouteImport
+      parentRoute: typeof ApiHealthReportMonitorRoute
     }
     '/api/gsc/oauth/callback': {
       id: '/api/gsc/oauth/callback'
@@ -1222,24 +1339,24 @@ const AppSettingsRouteWithChildren = AppSettingsRoute._addFileChildren(
 
 interface AppRouteRouteChildren {
   AppAiRoute: typeof AppAiRoute
+  AppAppRoute: typeof AppAppRoute
   AppBillingRoute: typeof AppBillingRoute
   AppProjectsRoute: typeof AppProjectsRoute
   AppSettingsRoute: typeof AppSettingsRouteWithChildren
   AppSupportRoute: typeof AppSupportRoute
   AppTeamRoute: typeof AppTeamRoute
-  AppIndexRoute: typeof AppIndexRoute
   AppHelpDataforseoApiKeyRoute: typeof AppHelpDataforseoApiKeyRoute
   AppHelpOpenrouterApiKeyRoute: typeof AppHelpOpenrouterApiKeyRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppAiRoute: AppAiRoute,
+  AppAppRoute: AppAppRoute,
   AppBillingRoute: AppBillingRoute,
   AppProjectsRoute: AppProjectsRoute,
   AppSettingsRoute: AppSettingsRouteWithChildren,
   AppSupportRoute: AppSupportRoute,
   AppTeamRoute: AppTeamRoute,
-  AppIndexRoute: AppIndexRoute,
   AppHelpDataforseoApiKeyRoute: AppHelpDataforseoApiKeyRoute,
   AppHelpOpenrouterApiKeyRoute: AppHelpOpenrouterApiKeyRoute,
 }
@@ -1391,7 +1508,49 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
+interface ApiHealthReportMonitorRouteChildren {
+  ApiHealthReportMonitorUnsubscribeRoute: typeof ApiHealthReportMonitorUnsubscribeRoute
+}
+
+const ApiHealthReportMonitorRouteChildren: ApiHealthReportMonitorRouteChildren =
+  {
+    ApiHealthReportMonitorUnsubscribeRoute:
+      ApiHealthReportMonitorUnsubscribeRoute,
+  }
+
+const ApiHealthReportMonitorRouteWithChildren =
+  ApiHealthReportMonitorRoute._addFileChildren(
+    ApiHealthReportMonitorRouteChildren,
+  )
+
+interface ApiHealthReportRouteChildren {
+  ApiHealthReportIdRoute: typeof ApiHealthReportIdRoute
+  ApiHealthReportMonitorRoute: typeof ApiHealthReportMonitorRouteWithChildren
+}
+
+const ApiHealthReportRouteChildren: ApiHealthReportRouteChildren = {
+  ApiHealthReportIdRoute: ApiHealthReportIdRoute,
+  ApiHealthReportMonitorRoute: ApiHealthReportMonitorRouteWithChildren,
+}
+
+const ApiHealthReportRouteWithChildren = ApiHealthReportRoute._addFileChildren(
+  ApiHealthReportRouteChildren,
+)
+
+interface ReportIdRouteChildren {
+  ReportIdOgDotpngRoute: typeof ReportIdOgDotpngRoute
+}
+
+const ReportIdRouteChildren: ReportIdRouteChildren = {
+  ReportIdOgDotpngRoute: ReportIdOgDotpngRoute,
+}
+
+const ReportIdRouteWithChildren = ReportIdRoute._addFileChildren(
+  ReportIdRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
   AppRouteRoute: AppRouteRouteWithChildren,
   ProjectRouteRoute: ProjectRouteRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
@@ -1405,8 +1564,9 @@ const rootRouteChildren: RootRouteChildren = {
     Char91DotwellKnownChar93OpenaiAppsChallengeRoute,
   AcceptInvitationIdRoute: AcceptInvitationIdRoute,
   ApiHealthRoute: ApiHealthRoute,
-  ApiHealthReportRoute: ApiHealthReportRoute,
+  ApiHealthReportRoute: ApiHealthReportRouteWithChildren,
   RReportIdRoute: RReportIdRoute,
+  ReportIdRoute: ReportIdRouteWithChildren,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiAutumnSplatRoute: ApiAutumnSplatRoute,
   STokenOgDotpngRoute: STokenOgDotpngRoute,

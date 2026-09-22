@@ -7,6 +7,7 @@ import { resolveUserContextFromHeaders } from "@/middleware/ensure-user/resolve"
 import { ProjectRepository } from "@/server/features/projects/repositories/ProjectRepository";
 import { SamSessionRepository } from "@/server/features/sam/SamSessionRepository";
 import { runScheduledRankChecks } from "@/server/features/rank-tracking/services/scheduledRankChecks";
+import { runScheduledHealthChecks } from "@/server/features/health-report/scheduledHealthChecks";
 import { reconcileStaleAudits } from "@/server/features/audit/services/auditReconciler";
 import { getOrCreateOrganizationCustomer } from "@/server/billing/subscription";
 import { isHostedServerAuthMode } from "@/server/lib/runtime-env";
@@ -184,6 +185,9 @@ export { SamChatAgent } from "./server/features/sam/SamChatAgent";
 
 // Daily OAuth KV garbage collection; must match a trigger in wrangler.jsonc.
 const MCP_OAUTH_PURGE_CRON = "17 3 * * *";
+// Weekly re-scan of monitored sites (mySeo health monitoring); matches a
+// trigger in wrangler.jsonc.
+const HEALTH_MONITOR_CRON = "0 8 * * 1";
 
 export default {
   fetch,
@@ -213,6 +217,11 @@ export default {
           console.error("[cron] Dub referral sale sweep failed:", err);
         }
       }
+      return;
+    }
+
+    if (controller.cron === HEALTH_MONITOR_CRON) {
+      await runScheduledHealthChecks();
       return;
     }
 

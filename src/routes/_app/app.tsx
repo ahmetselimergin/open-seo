@@ -14,11 +14,14 @@ import { AuthConfigErrorCard } from "@/client/components/AuthConfigErrorCard";
 import { UnauthenticatedErrorCard } from "@/client/components/UnauthenticatedErrorCard";
 import { SUBSCRIBE_ROUTE } from "@/shared/billing";
 
-export const Route = createFileRoute("/_app/")({
-  component: IndexRedirect,
+// The OpenSEO workspace entry. The site root ("/") is the public mySeo
+// homepage now, so the "pick a project and open the dashboard" behaviour that
+// used to live at "/" moved here, to "/app".
+export const Route = createFileRoute("/_app/app")({
+  component: DashboardRedirect,
 });
 
-function IndexRedirect() {
+function DashboardRedirect() {
   const navigate = useNavigate();
 
   const { data, error, isError, refetch } = useQuery({

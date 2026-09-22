@@ -38,7 +38,7 @@ export const Route = createFileRoute("/_authenticated/onboarding/")({
       onboardingAnswersQueryOptions(),
     );
     if (data.completedAt) {
-      throw redirect({ to: "/", replace: true });
+      throw redirect({ to: "/app", replace: true });
     }
   },
   component: OnboardingPage,
@@ -128,7 +128,7 @@ function OnboardingFlow({
       source: answers.source,
     });
     // The dashboard's onboarding checklist owns MCP coaching now.
-    void navigate({ to: "/", replace: true });
+    void navigate({ to: "/app", replace: true });
   };
 
   return (
