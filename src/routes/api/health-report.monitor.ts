@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { waitUntil } from "cloudflare:workers";
 import { z } from "zod";
 import { normalizeAndValidateStartUrl } from "@/server/lib/audit/url-policy";
 import { upsertMonitor } from "@/server/features/health-report/monitor-store";
@@ -6,6 +7,10 @@ import {
   guardPublicPost,
   jsonResponse as json,
 } from "@/server/features/health-report/abuse";
+import {
+  captureHealthEvent,
+  visitorId,
+} from "@/server/features/health-report/analytics";
 
 // Opt in to weekly monitoring for a domain. Stores (email, domain) and the
 // current score as the baseline; the weekly cron re-scans and emails on change.
@@ -45,6 +50,12 @@ async function handleSubscribe(request: Request): Promise<Response> {
     startUrl,
     score: parsed.data.score ?? null,
   });
+
+  waitUntil(
+    visitorId(request).then((id) =>
+      captureHealthEvent(id, "health_report_monitor_subscribed", { domain }),
+    ),
+  );
 
   return json({ ok: true }, 200);
 }

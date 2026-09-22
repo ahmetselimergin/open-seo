@@ -12,6 +12,10 @@ import {
   guardPublicPost,
   jsonResponse as json,
 } from "@/server/features/health-report/abuse";
+import {
+  captureHealthEvent,
+  visitorId,
+} from "@/server/features/health-report/analytics";
 import { buildHealthReport } from "@/shared/health-report";
 import { healthReportRequestSchema } from "@/types/schemas/health-report";
 
@@ -74,6 +78,17 @@ async function handleHealthReport(request: Request): Promise<Response> {
         sendHealthReportEmail({ email: trimmedEmail, report, shareUrl }),
       );
     }
+
+    waitUntil(
+      visitorId(request).then((vid) =>
+        captureHealthEvent(vid, "health_report_scanned", {
+          domain: report.domain,
+          score: report.score,
+          pages_scanned: report.pagesScanned,
+          has_email: Boolean(trimmedEmail),
+        }),
+      ),
+    );
 
     return json({ ...report, id }, 200);
   } catch (error) {

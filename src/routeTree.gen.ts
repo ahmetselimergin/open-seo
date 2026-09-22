@@ -10,8 +10,12 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyEmailRouteImport } from './routes/verify-email'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as KullanimKosullariRouteImport } from './routes/kullanim-kosullari'
 import { Route as HealthReportRouteImport } from './routes/health-report'
+import { Route as GizlilikRouteImport } from './routes/gizlilik'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AuthErrorRouteImport } from './routes/auth-error'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
@@ -82,14 +86,34 @@ const VerifyEmailRoute = VerifyEmailRouteImport.update({
   path: '/verify-email',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KullanimKosullariRoute = KullanimKosullariRouteImport.update({
+  id: '/kullanim-kosullari',
+  path: '/kullanim-kosullari',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HealthReportRoute = HealthReportRouteImport.update({
   id: '/health-report',
   path: '/health-report',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GizlilikRoute = GizlilikRouteImport.update({
+  id: '/gizlilik',
+  path: '/gizlilik',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
@@ -435,8 +459,12 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth-error': typeof AuthErrorRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/gizlilik': typeof GizlilikRoute
   '/health-report': typeof HealthReportRoute
+  '/kullanim-kosullari': typeof KullanimKosullariRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/verify-email': typeof VerifyEmailRoute
   '/.well-known/openai-apps-challenge': typeof Char91DotwellKnownChar93OpenaiAppsChallengeRoute
   '/ai': typeof AppAiRoute
@@ -500,8 +528,12 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth-error': typeof AuthErrorRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/gizlilik': typeof GizlilikRoute
   '/health-report': typeof HealthReportRoute
+  '/kullanim-kosullari': typeof KullanimKosullariRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/verify-email': typeof VerifyEmailRoute
   '/.well-known/openai-apps-challenge': typeof Char91DotwellKnownChar93OpenaiAppsChallengeRoute
   '/ai': typeof AppAiRoute
@@ -565,8 +597,12 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/auth-error': typeof AuthErrorRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/gizlilik': typeof GizlilikRoute
   '/health-report': typeof HealthReportRoute
+  '/kullanim-kosullari': typeof KullanimKosullariRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/verify-email': typeof VerifyEmailRoute
   '/.well-known/openai-apps-challenge': typeof Char91DotwellKnownChar93OpenaiAppsChallengeRoute
   '/_app/ai': typeof AppAiRoute
@@ -632,8 +668,12 @@ export interface FileRouteTypes {
     | '/'
     | '/auth-error'
     | '/forgot-password'
+    | '/gizlilik'
     | '/health-report'
+    | '/kullanim-kosullari'
     | '/reset-password'
+    | '/robots.txt'
+    | '/sitemap.xml'
     | '/verify-email'
     | '/.well-known/openai-apps-challenge'
     | '/ai'
@@ -697,8 +737,12 @@ export interface FileRouteTypes {
     | '/'
     | '/auth-error'
     | '/forgot-password'
+    | '/gizlilik'
     | '/health-report'
+    | '/kullanim-kosullari'
     | '/reset-password'
+    | '/robots.txt'
+    | '/sitemap.xml'
     | '/verify-email'
     | '/.well-known/openai-apps-challenge'
     | '/ai'
@@ -761,8 +805,12 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth-error'
     | '/forgot-password'
+    | '/gizlilik'
     | '/health-report'
+    | '/kullanim-kosullari'
     | '/reset-password'
+    | '/robots.txt'
+    | '/sitemap.xml'
     | '/verify-email'
     | '/.well-known/openai-apps-challenge'
     | '/_app/ai'
@@ -831,8 +879,12 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AuthErrorRoute: typeof AuthErrorRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
+  GizlilikRoute: typeof GizlilikRoute
   HealthReportRoute: typeof HealthReportRoute
+  KullanimKosullariRoute: typeof KullanimKosullariRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
   Char91DotwellKnownChar93OpenaiAppsChallengeRoute: typeof Char91DotwellKnownChar93OpenaiAppsChallengeRoute
   AcceptInvitationIdRoute: typeof AcceptInvitationIdRoute
@@ -858,6 +910,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifyEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
@@ -865,11 +931,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/kullanim-kosullari': {
+      id: '/kullanim-kosullari'
+      path: '/kullanim-kosullari'
+      fullPath: '/kullanim-kosullari'
+      preLoaderRoute: typeof KullanimKosullariRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/health-report': {
       id: '/health-report'
       path: '/health-report'
       fullPath: '/health-report'
       preLoaderRoute: typeof HealthReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gizlilik': {
+      id: '/gizlilik'
+      path: '/gizlilik'
+      fullPath: '/gizlilik'
+      preLoaderRoute: typeof GizlilikRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/forgot-password': {
@@ -1557,8 +1637,12 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AuthErrorRoute: AuthErrorRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
+  GizlilikRoute: GizlilikRoute,
   HealthReportRoute: HealthReportRoute,
+  KullanimKosullariRoute: KullanimKosullariRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  RobotsDottxtRoute: RobotsDottxtRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   VerifyEmailRoute: VerifyEmailRoute,
   Char91DotwellKnownChar93OpenaiAppsChallengeRoute:
     Char91DotwellKnownChar93OpenaiAppsChallengeRoute,

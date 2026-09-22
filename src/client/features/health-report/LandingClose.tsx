@@ -97,10 +97,26 @@ function SiteFooter() {
           Sitenizin SEO sağlığı, herkesin anlayacağı dilde.
         </p>
       </div>
-      <p className="inline-flex items-center gap-1.5 text-sm text-base-content/45">
-        <ShieldCheck className="size-4" />
-        Ücretsiz, kayıt gerektirmez
-      </p>
+      <div className="flex flex-col gap-2 sm:items-end">
+        <p className="inline-flex items-center gap-1.5 text-sm text-base-content/45">
+          <ShieldCheck className="size-4" />
+          Ücretsiz, kayıt gerektirmez
+        </p>
+        <nav className="flex gap-4 text-sm text-base-content/55">
+          <a
+            href="/gizlilik"
+            className="transition-colors hover:text-base-content"
+          >
+            Gizlilik
+          </a>
+          <a
+            href="/kullanim-kosullari"
+            className="transition-colors hover:text-base-content"
+          >
+            Kullanım Koşulları
+          </a>
+        </nav>
+      </div>
     </footer>
   );
 }
