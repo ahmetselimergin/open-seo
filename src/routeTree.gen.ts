@@ -14,6 +14,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as KullanimKosullariRouteImport } from './routes/kullanim-kosullari'
+import { Route as KarsilastirRouteImport } from './routes/karsilastir'
 import { Route as HealthReportRouteImport } from './routes/health-report'
 import { Route as GizlilikRouteImport } from './routes/gizlilik'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
@@ -25,6 +26,7 @@ import { Route as AppRouteRouteImport } from './routes/_app/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ReportIdRouteImport } from './routes/report.$id'
 import { Route as RReportIdRouteImport } from './routes/r/$reportId'
+import { Route as IzlemeTokenRouteImport } from './routes/izleme.$token'
 import { Route as ApiHealthReportRouteImport } from './routes/api/health-report'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as AcceptInvitationIdRouteImport } from './routes/accept-invitation.$id'
@@ -46,7 +48,9 @@ import { Route as AppSettingsIndexRouteImport } from './routes/_app/settings/ind
 import { Route as STokenRawRouteImport } from './routes/s/$token/raw'
 import { Route as STokenOgDotpngRouteImport } from './routes/s/$token/og[.]png'
 import { Route as ReportIdOgDotpngRouteImport } from './routes/report.$id.og[.]png'
+import { Route as ReportIdBadgeDotsvgRouteImport } from './routes/report.$id.badge[.]svg'
 import { Route as ApiHealthReportMonitorRouteImport } from './routes/api/health-report.monitor'
+import { Route as ApiHealthReportCompareRouteImport } from './routes/api/health-report.compare'
 import { Route as ApiHealthReportIdRouteImport } from './routes/api/health-report.$id'
 import { Route as ApiAutumnSplatRouteImport } from './routes/api/autumn/$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
@@ -56,6 +60,7 @@ import { Route as AppHelpDataforseoApiKeyRouteImport } from './routes/_app/help/
 import { Route as ProjectPProjectIdRouteRouteImport } from './routes/_project/p/$projectId/route'
 import { Route as ProjectPProjectIdIndexRouteImport } from './routes/_project/p/$projectId/index'
 import { Route as ApiHealthReportMonitorUnsubscribeRouteImport } from './routes/api/health-report.monitor.unsubscribe'
+import { Route as ApiHealthReportMonitorTokenRouteImport } from './routes/api/health-report.monitor.$token'
 import { Route as ApiGscOauthCallbackRouteImport } from './routes/api/gsc/oauth/callback'
 import { Route as ApiGa4OauthCallbackRouteImport } from './routes/api/ga4/oauth/callback'
 import { Route as ProjectPProjectIdSettingsRouteImport } from './routes/_project/p/$projectId/settings'
@@ -104,6 +109,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const KullanimKosullariRoute = KullanimKosullariRouteImport.update({
   id: '/kullanim-kosullari',
   path: '/kullanim-kosullari',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KarsilastirRoute = KarsilastirRouteImport.update({
+  id: '/karsilastir',
+  path: '/karsilastir',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HealthReportRoute = HealthReportRouteImport.update({
@@ -155,6 +165,11 @@ const ReportIdRoute = ReportIdRouteImport.update({
 const RReportIdRoute = RReportIdRouteImport.update({
   id: '/r/$reportId',
   path: '/r/$reportId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IzlemeTokenRoute = IzlemeTokenRouteImport.update({
+  id: '/izleme/$token',
+  path: '/izleme/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiHealthReportRoute = ApiHealthReportRouteImport.update({
@@ -265,9 +280,19 @@ const ReportIdOgDotpngRoute = ReportIdOgDotpngRouteImport.update({
   path: '/og.png',
   getParentRoute: () => ReportIdRoute,
 } as any)
+const ReportIdBadgeDotsvgRoute = ReportIdBadgeDotsvgRouteImport.update({
+  id: '/badge.svg',
+  path: '/badge.svg',
+  getParentRoute: () => ReportIdRoute,
+} as any)
 const ApiHealthReportMonitorRoute = ApiHealthReportMonitorRouteImport.update({
   id: '/monitor',
   path: '/monitor',
+  getParentRoute: () => ApiHealthReportRoute,
+} as any)
+const ApiHealthReportCompareRoute = ApiHealthReportCompareRouteImport.update({
+  id: '/compare',
+  path: '/compare',
   getParentRoute: () => ApiHealthReportRoute,
 } as any)
 const ApiHealthReportIdRoute = ApiHealthReportIdRouteImport.update({
@@ -314,6 +339,12 @@ const ApiHealthReportMonitorUnsubscribeRoute =
   ApiHealthReportMonitorUnsubscribeRouteImport.update({
     id: '/unsubscribe',
     path: '/unsubscribe',
+    getParentRoute: () => ApiHealthReportMonitorRoute,
+  } as any)
+const ApiHealthReportMonitorTokenRoute =
+  ApiHealthReportMonitorTokenRouteImport.update({
+    id: '/$token',
+    path: '/$token',
     getParentRoute: () => ApiHealthReportMonitorRoute,
   } as any)
 const ApiGscOauthCallbackRoute = ApiGscOauthCallbackRouteImport.update({
@@ -461,6 +492,7 @@ export interface FileRoutesByFullPath {
   '/forgot-password': typeof ForgotPasswordRoute
   '/gizlilik': typeof GizlilikRoute
   '/health-report': typeof HealthReportRoute
+  '/karsilastir': typeof KarsilastirRoute
   '/kullanim-kosullari': typeof KullanimKosullariRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -481,6 +513,7 @@ export interface FileRoutesByFullPath {
   '/accept-invitation/$id': typeof AcceptInvitationIdRoute
   '/api/health': typeof ApiHealthRoute
   '/api/health-report': typeof ApiHealthReportRouteWithChildren
+  '/izleme/$token': typeof IzlemeTokenRoute
   '/r/$reportId': typeof RReportIdRoute
   '/report/$id': typeof ReportIdRouteWithChildren
   '/p/$projectId': typeof ProjectPProjectIdRouteRouteWithChildren
@@ -490,7 +523,9 @@ export interface FileRoutesByFullPath {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/autumn/$': typeof ApiAutumnSplatRoute
   '/api/health-report/$id': typeof ApiHealthReportIdRoute
+  '/api/health-report/compare': typeof ApiHealthReportCompareRoute
   '/api/health-report/monitor': typeof ApiHealthReportMonitorRouteWithChildren
+  '/report/$id/badge.svg': typeof ReportIdBadgeDotsvgRoute
   '/report/$id/og.png': typeof ReportIdOgDotpngRoute
   '/s/$token/og.png': typeof STokenOgDotpngRoute
   '/s/$token/raw': typeof STokenRawRoute
@@ -511,6 +546,7 @@ export interface FileRoutesByFullPath {
   '/p/$projectId/settings': typeof ProjectPProjectIdSettingsRouteWithChildren
   '/api/ga4/oauth/callback': typeof ApiGa4OauthCallbackRoute
   '/api/gsc/oauth/callback': typeof ApiGscOauthCallbackRoute
+  '/api/health-report/monitor/$token': typeof ApiHealthReportMonitorTokenRoute
   '/api/health-report/monitor/unsubscribe': typeof ApiHealthReportMonitorUnsubscribeRoute
   '/p/$projectId/': typeof ProjectPProjectIdIndexRoute
   '/p/$projectId/rank-tracking/$configId': typeof ProjectPProjectIdRankTrackingConfigIdRoute
@@ -530,6 +566,7 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
   '/gizlilik': typeof GizlilikRoute
   '/health-report': typeof HealthReportRoute
+  '/karsilastir': typeof KarsilastirRoute
   '/kullanim-kosullari': typeof KullanimKosullariRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -549,6 +586,7 @@ export interface FileRoutesByTo {
   '/accept-invitation/$id': typeof AcceptInvitationIdRoute
   '/api/health': typeof ApiHealthRoute
   '/api/health-report': typeof ApiHealthReportRouteWithChildren
+  '/izleme/$token': typeof IzlemeTokenRoute
   '/r/$reportId': typeof RReportIdRoute
   '/report/$id': typeof ReportIdRouteWithChildren
   '/help/dataforseo-api-key': typeof AppHelpDataforseoApiKeyRoute
@@ -557,7 +595,9 @@ export interface FileRoutesByTo {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/autumn/$': typeof ApiAutumnSplatRoute
   '/api/health-report/$id': typeof ApiHealthReportIdRoute
+  '/api/health-report/compare': typeof ApiHealthReportCompareRoute
   '/api/health-report/monitor': typeof ApiHealthReportMonitorRouteWithChildren
+  '/report/$id/badge.svg': typeof ReportIdBadgeDotsvgRoute
   '/report/$id/og.png': typeof ReportIdOgDotpngRoute
   '/s/$token/og.png': typeof STokenOgDotpngRoute
   '/s/$token/raw': typeof STokenRawRoute
@@ -575,6 +615,7 @@ export interface FileRoutesByTo {
   '/p/$projectId/search-performance': typeof ProjectPProjectIdSearchPerformanceRoute
   '/api/ga4/oauth/callback': typeof ApiGa4OauthCallbackRoute
   '/api/gsc/oauth/callback': typeof ApiGscOauthCallbackRoute
+  '/api/health-report/monitor/$token': typeof ApiHealthReportMonitorTokenRoute
   '/api/health-report/monitor/unsubscribe': typeof ApiHealthReportMonitorUnsubscribeRoute
   '/p/$projectId': typeof ProjectPProjectIdIndexRoute
   '/p/$projectId/rank-tracking/$configId': typeof ProjectPProjectIdRankTrackingConfigIdRoute
@@ -599,6 +640,7 @@ export interface FileRoutesById {
   '/forgot-password': typeof ForgotPasswordRoute
   '/gizlilik': typeof GizlilikRoute
   '/health-report': typeof HealthReportRoute
+  '/karsilastir': typeof KarsilastirRoute
   '/kullanim-kosullari': typeof KullanimKosullariRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -619,6 +661,7 @@ export interface FileRoutesById {
   '/accept-invitation/$id': typeof AcceptInvitationIdRoute
   '/api/health': typeof ApiHealthRoute
   '/api/health-report': typeof ApiHealthReportRouteWithChildren
+  '/izleme/$token': typeof IzlemeTokenRoute
   '/r/$reportId': typeof RReportIdRoute
   '/report/$id': typeof ReportIdRouteWithChildren
   '/_project/p/$projectId': typeof ProjectPProjectIdRouteRouteWithChildren
@@ -628,7 +671,9 @@ export interface FileRoutesById {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/autumn/$': typeof ApiAutumnSplatRoute
   '/api/health-report/$id': typeof ApiHealthReportIdRoute
+  '/api/health-report/compare': typeof ApiHealthReportCompareRoute
   '/api/health-report/monitor': typeof ApiHealthReportMonitorRouteWithChildren
+  '/report/$id/badge.svg': typeof ReportIdBadgeDotsvgRoute
   '/report/$id/og.png': typeof ReportIdOgDotpngRoute
   '/s/$token/og.png': typeof STokenOgDotpngRoute
   '/s/$token/raw': typeof STokenRawRoute
@@ -649,6 +694,7 @@ export interface FileRoutesById {
   '/_project/p/$projectId/settings': typeof ProjectPProjectIdSettingsRouteWithChildren
   '/api/ga4/oauth/callback': typeof ApiGa4OauthCallbackRoute
   '/api/gsc/oauth/callback': typeof ApiGscOauthCallbackRoute
+  '/api/health-report/monitor/$token': typeof ApiHealthReportMonitorTokenRoute
   '/api/health-report/monitor/unsubscribe': typeof ApiHealthReportMonitorUnsubscribeRoute
   '/_project/p/$projectId/': typeof ProjectPProjectIdIndexRoute
   '/_project/p/$projectId/rank-tracking/$configId': typeof ProjectPProjectIdRankTrackingConfigIdRoute
@@ -670,6 +716,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/gizlilik'
     | '/health-report'
+    | '/karsilastir'
     | '/kullanim-kosullari'
     | '/reset-password'
     | '/robots.txt'
@@ -690,6 +737,7 @@ export interface FileRouteTypes {
     | '/accept-invitation/$id'
     | '/api/health'
     | '/api/health-report'
+    | '/izleme/$token'
     | '/r/$reportId'
     | '/report/$id'
     | '/p/$projectId'
@@ -699,7 +747,9 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/api/autumn/$'
     | '/api/health-report/$id'
+    | '/api/health-report/compare'
     | '/api/health-report/monitor'
+    | '/report/$id/badge.svg'
     | '/report/$id/og.png'
     | '/s/$token/og.png'
     | '/s/$token/raw'
@@ -720,6 +770,7 @@ export interface FileRouteTypes {
     | '/p/$projectId/settings'
     | '/api/ga4/oauth/callback'
     | '/api/gsc/oauth/callback'
+    | '/api/health-report/monitor/$token'
     | '/api/health-report/monitor/unsubscribe'
     | '/p/$projectId/'
     | '/p/$projectId/rank-tracking/$configId'
@@ -739,6 +790,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/gizlilik'
     | '/health-report'
+    | '/karsilastir'
     | '/kullanim-kosullari'
     | '/reset-password'
     | '/robots.txt'
@@ -758,6 +810,7 @@ export interface FileRouteTypes {
     | '/accept-invitation/$id'
     | '/api/health'
     | '/api/health-report'
+    | '/izleme/$token'
     | '/r/$reportId'
     | '/report/$id'
     | '/help/dataforseo-api-key'
@@ -766,7 +819,9 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/api/autumn/$'
     | '/api/health-report/$id'
+    | '/api/health-report/compare'
     | '/api/health-report/monitor'
+    | '/report/$id/badge.svg'
     | '/report/$id/og.png'
     | '/s/$token/og.png'
     | '/s/$token/raw'
@@ -784,6 +839,7 @@ export interface FileRouteTypes {
     | '/p/$projectId/search-performance'
     | '/api/ga4/oauth/callback'
     | '/api/gsc/oauth/callback'
+    | '/api/health-report/monitor/$token'
     | '/api/health-report/monitor/unsubscribe'
     | '/p/$projectId'
     | '/p/$projectId/rank-tracking/$configId'
@@ -807,6 +863,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/gizlilik'
     | '/health-report'
+    | '/karsilastir'
     | '/kullanim-kosullari'
     | '/reset-password'
     | '/robots.txt'
@@ -827,6 +884,7 @@ export interface FileRouteTypes {
     | '/accept-invitation/$id'
     | '/api/health'
     | '/api/health-report'
+    | '/izleme/$token'
     | '/r/$reportId'
     | '/report/$id'
     | '/_project/p/$projectId'
@@ -836,7 +894,9 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/api/autumn/$'
     | '/api/health-report/$id'
+    | '/api/health-report/compare'
     | '/api/health-report/monitor'
+    | '/report/$id/badge.svg'
     | '/report/$id/og.png'
     | '/s/$token/og.png'
     | '/s/$token/raw'
@@ -857,6 +917,7 @@ export interface FileRouteTypes {
     | '/_project/p/$projectId/settings'
     | '/api/ga4/oauth/callback'
     | '/api/gsc/oauth/callback'
+    | '/api/health-report/monitor/$token'
     | '/api/health-report/monitor/unsubscribe'
     | '/_project/p/$projectId/'
     | '/_project/p/$projectId/rank-tracking/$configId'
@@ -881,6 +942,7 @@ export interface RootRouteChildren {
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   GizlilikRoute: typeof GizlilikRoute
   HealthReportRoute: typeof HealthReportRoute
+  KarsilastirRoute: typeof KarsilastirRoute
   KullanimKosullariRoute: typeof KullanimKosullariRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
@@ -890,6 +952,7 @@ export interface RootRouteChildren {
   AcceptInvitationIdRoute: typeof AcceptInvitationIdRoute
   ApiHealthRoute: typeof ApiHealthRoute
   ApiHealthReportRoute: typeof ApiHealthReportRouteWithChildren
+  IzlemeTokenRoute: typeof IzlemeTokenRoute
   RReportIdRoute: typeof RReportIdRoute
   ReportIdRoute: typeof ReportIdRouteWithChildren
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -936,6 +999,13 @@ declare module '@tanstack/react-router' {
       path: '/kullanim-kosullari'
       fullPath: '/kullanim-kosullari'
       preLoaderRoute: typeof KullanimKosullariRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/karsilastir': {
+      id: '/karsilastir'
+      path: '/karsilastir'
+      fullPath: '/karsilastir'
+      preLoaderRoute: typeof KarsilastirRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/health-report': {
@@ -1013,6 +1083,13 @@ declare module '@tanstack/react-router' {
       path: '/r/$reportId'
       fullPath: '/r/$reportId'
       preLoaderRoute: typeof RReportIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/izleme/$token': {
+      id: '/izleme/$token'
+      path: '/izleme/$token'
+      fullPath: '/izleme/$token'
+      preLoaderRoute: typeof IzlemeTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/health-report': {
@@ -1162,11 +1239,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReportIdOgDotpngRouteImport
       parentRoute: typeof ReportIdRoute
     }
+    '/report/$id/badge.svg': {
+      id: '/report/$id/badge.svg'
+      path: '/badge.svg'
+      fullPath: '/report/$id/badge.svg'
+      preLoaderRoute: typeof ReportIdBadgeDotsvgRouteImport
+      parentRoute: typeof ReportIdRoute
+    }
     '/api/health-report/monitor': {
       id: '/api/health-report/monitor'
       path: '/monitor'
       fullPath: '/api/health-report/monitor'
       preLoaderRoute: typeof ApiHealthReportMonitorRouteImport
+      parentRoute: typeof ApiHealthReportRoute
+    }
+    '/api/health-report/compare': {
+      id: '/api/health-report/compare'
+      path: '/compare'
+      fullPath: '/api/health-report/compare'
+      preLoaderRoute: typeof ApiHealthReportCompareRouteImport
       parentRoute: typeof ApiHealthReportRoute
     }
     '/api/health-report/$id': {
@@ -1230,6 +1321,13 @@ declare module '@tanstack/react-router' {
       path: '/unsubscribe'
       fullPath: '/api/health-report/monitor/unsubscribe'
       preLoaderRoute: typeof ApiHealthReportMonitorUnsubscribeRouteImport
+      parentRoute: typeof ApiHealthReportMonitorRoute
+    }
+    '/api/health-report/monitor/$token': {
+      id: '/api/health-report/monitor/$token'
+      path: '/$token'
+      fullPath: '/api/health-report/monitor/$token'
+      preLoaderRoute: typeof ApiHealthReportMonitorTokenRouteImport
       parentRoute: typeof ApiHealthReportMonitorRoute
     }
     '/api/gsc/oauth/callback': {
@@ -1589,11 +1687,13 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 )
 
 interface ApiHealthReportMonitorRouteChildren {
+  ApiHealthReportMonitorTokenRoute: typeof ApiHealthReportMonitorTokenRoute
   ApiHealthReportMonitorUnsubscribeRoute: typeof ApiHealthReportMonitorUnsubscribeRoute
 }
 
 const ApiHealthReportMonitorRouteChildren: ApiHealthReportMonitorRouteChildren =
   {
+    ApiHealthReportMonitorTokenRoute: ApiHealthReportMonitorTokenRoute,
     ApiHealthReportMonitorUnsubscribeRoute:
       ApiHealthReportMonitorUnsubscribeRoute,
   }
@@ -1605,11 +1705,13 @@ const ApiHealthReportMonitorRouteWithChildren =
 
 interface ApiHealthReportRouteChildren {
   ApiHealthReportIdRoute: typeof ApiHealthReportIdRoute
+  ApiHealthReportCompareRoute: typeof ApiHealthReportCompareRoute
   ApiHealthReportMonitorRoute: typeof ApiHealthReportMonitorRouteWithChildren
 }
 
 const ApiHealthReportRouteChildren: ApiHealthReportRouteChildren = {
   ApiHealthReportIdRoute: ApiHealthReportIdRoute,
+  ApiHealthReportCompareRoute: ApiHealthReportCompareRoute,
   ApiHealthReportMonitorRoute: ApiHealthReportMonitorRouteWithChildren,
 }
 
@@ -1618,10 +1720,12 @@ const ApiHealthReportRouteWithChildren = ApiHealthReportRoute._addFileChildren(
 )
 
 interface ReportIdRouteChildren {
+  ReportIdBadgeDotsvgRoute: typeof ReportIdBadgeDotsvgRoute
   ReportIdOgDotpngRoute: typeof ReportIdOgDotpngRoute
 }
 
 const ReportIdRouteChildren: ReportIdRouteChildren = {
+  ReportIdBadgeDotsvgRoute: ReportIdBadgeDotsvgRoute,
   ReportIdOgDotpngRoute: ReportIdOgDotpngRoute,
 }
 
@@ -1639,6 +1743,7 @@ const rootRouteChildren: RootRouteChildren = {
   ForgotPasswordRoute: ForgotPasswordRoute,
   GizlilikRoute: GizlilikRoute,
   HealthReportRoute: HealthReportRoute,
+  KarsilastirRoute: KarsilastirRoute,
   KullanimKosullariRoute: KullanimKosullariRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
@@ -1649,6 +1754,7 @@ const rootRouteChildren: RootRouteChildren = {
   AcceptInvitationIdRoute: AcceptInvitationIdRoute,
   ApiHealthRoute: ApiHealthRoute,
   ApiHealthReportRoute: ApiHealthReportRouteWithChildren,
+  IzlemeTokenRoute: IzlemeTokenRoute,
   RReportIdRoute: RReportIdRoute,
   ReportIdRoute: ReportIdRouteWithChildren,
   ApiAuthSplatRoute: ApiAuthSplatRoute,

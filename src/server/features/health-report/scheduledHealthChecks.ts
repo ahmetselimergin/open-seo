@@ -10,7 +10,7 @@ import { sendHealthAlertEmail } from "@/server/features/health-report/report-ema
 import {
   getMonitor,
   listMonitorKeys,
-  updateMonitor,
+  recordCheck,
   type MonitorRecord,
 } from "@/server/features/health-report/monitor-store";
 
@@ -64,10 +64,7 @@ export async function runScheduledHealthChecks(): Promise<void> {
 
       const previous = rec.lastScore;
       const id = await saveHealthReport(report, rec.email);
-      await updateMonitor(key, {
-        lastScore: report.score,
-        lastCheckedAt: new Date().toISOString(),
-      });
+      await recordCheck(key, report.score);
 
       if (previous !== null && report.score !== previous) {
         await sendHealthAlertEmail({
@@ -76,6 +73,9 @@ export async function runScheduledHealthChecks(): Promise<void> {
           previousScore: previous,
           newScore: report.score,
           reportUrl: base ? `${base}/report/${id}` : `/report/${id}`,
+          dashboardUrl: base
+            ? `${base}/izleme/${rec.unsubToken}`
+            : `/izleme/${rec.unsubToken}`,
           unsubscribeUrl: base
             ? `${base}/api/health-report/monitor/unsubscribe?token=${rec.unsubToken}`
             : `/api/health-report/monitor/unsubscribe?token=${rec.unsubToken}`,

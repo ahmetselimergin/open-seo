@@ -71,6 +71,7 @@ export async function sendHealthAlertEmail(input: {
   previousScore: number;
   newScore: number;
   reportUrl: string;
+  dashboardUrl: string;
   unsubscribeUrl: string;
 }): Promise<void> {
   const apiKey = getOptionalEnv("LOOPS_API_KEY");
@@ -100,6 +101,7 @@ export async function sendHealthAlertEmail(input: {
           direction:
             input.newScore >= input.previousScore ? "yükseldi" : "düştü",
           reportUrl: input.reportUrl,
+          dashboardUrl: input.dashboardUrl,
           unsubscribeUrl: input.unsubscribeUrl,
         },
       }),

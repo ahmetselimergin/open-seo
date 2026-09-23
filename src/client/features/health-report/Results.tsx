@@ -8,6 +8,7 @@ import {
 } from "@/client/features/health-report/tones";
 import { Gauge } from "@/client/features/health-report/Gauge";
 import {
+  BadgeEmbed,
   MonitorCard,
   ShareButton,
 } from "@/client/features/health-report/reportActions";
@@ -58,6 +59,7 @@ export function Results({
       <ProblemsSection report={report} />
       <ActionPlanSection report={report} />
       <MonitorCard domain={report.domain} score={report.score} />
+      {shareId && <BadgeEmbed shareId={shareId} />}
       <FooterCta />
     </div>
   );

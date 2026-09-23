@@ -54,10 +54,16 @@ export function HomePage() {
       <Backdrop />
 
       <header className="hr-nav hr-no-print sticky top-0 z-20">
-        <div className="mx-auto flex h-14 w-full max-w-6xl items-center px-5">
+        <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-5">
           <span className="text-lg font-bold tracking-tight">
             my<span className="hr-accent">Seo</span>
           </span>
+          <a
+            href="/karsilastir"
+            className="text-sm text-base-content/60 transition-colors hover:text-base-content"
+          >
+            Karşılaştır
+          </a>
         </div>
       </header>
 

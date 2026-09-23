@@ -44,7 +44,7 @@ async function handleSubscribe(request: Request): Promise<Response> {
   }
   const domain = new URL(startUrl).hostname.replace(/^www\./, "");
 
-  await upsertMonitor({
+  const token = await upsertMonitor({
     email: parsed.data.email.trim(),
     domain,
     startUrl,
@@ -57,7 +57,7 @@ async function handleSubscribe(request: Request): Promise<Response> {
     ),
   );
 
-  return json({ ok: true }, 200);
+  return json({ ok: true, token }, 200);
 }
 
 export const Route = createFileRoute("/api/health-report/monitor")({

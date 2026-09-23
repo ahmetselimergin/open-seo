@@ -66,7 +66,9 @@ export interface QuickAuditResult {
  */
 export async function runQuickAudit(
   startUrl: string,
+  options: { maxPages?: number } = {},
 ): Promise<QuickAuditResult> {
+  const maxPages = Math.min(options.maxPages ?? MAX_PAGES, MAX_PAGES);
   const startedAt = Date.now();
   const origin = getOrigin(startUrl);
   const deadline = startedAt + TIME_BUDGET_MS;
@@ -93,7 +95,7 @@ export async function runQuickAudit(
   enqueue({ url: startUrl, depth: 0, inSitemap: false });
 
   try {
-    const discovered = await discoverUrls(origin, MAX_PAGES);
+    const discovered = await discoverUrls(origin, maxPages);
     for (const url of discovered.urls) {
       if (isSameOrigin(url, origin) && isCrawlableUrl(url)) {
         enqueue({ url, depth: null, inSitemap: true });
@@ -107,7 +109,7 @@ export async function runQuickAudit(
   let active = 0;
 
   const worker = async (): Promise<void> => {
-    while (pages.length < MAX_PAGES && Date.now() < deadline) {
+    while (pages.length < maxPages && Date.now() < deadline) {
       const next = queue.shift();
       if (!next) {
         // Nothing queued: if other workers are mid-fetch they may enqueue more,
@@ -128,7 +130,7 @@ export async function runQuickAudit(
       // Null means the shared cooldown stopped this URL's fetch (site is
       // rate-limiting hard); skip it rather than reporting a false error.
       if (!page) continue;
-      if (pages.length >= MAX_PAGES) break;
+      if (pages.length >= maxPages) break;
       pages.push(page);
 
       // Follow internal links from real HTML pages to widen the frontier.
@@ -152,7 +154,7 @@ export async function runQuickAudit(
 
   await Promise.all(Array.from({ length: CONCURRENCY }, () => worker()));
 
-  const crawled = pages.slice(0, MAX_PAGES);
+  const crawled = pages.slice(0, maxPages);
   const issues = [
     ...crawled.flatMap((page) => runPageReporters(page)),
     ...detectCrossPageIssues(crawled, origin),

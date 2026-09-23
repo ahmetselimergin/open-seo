@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Bell, Check, Link2 } from "lucide-react";
+import { Bell, Check, Code, Link2 } from "lucide-react";
 
 /** Copy-share-link button shown on a report. */
 export function ShareButton({ shareId }: { shareId: string }) {
@@ -32,6 +32,69 @@ export function ShareButton({ shareId }: { shareId: string }) {
   );
 }
 
+/** Copy-paste embed badge for a shared report (drives backlinks). */
+export function BadgeEmbed({ shareId }: { shareId: string }) {
+  const [copied, setCopied] = React.useState(false);
+  const [origin, setOrigin] = React.useState("");
+  React.useEffect(() => setOrigin(window.location.origin), []);
+
+  const snippet = `<a href="${origin}/report/${shareId}" target="_blank" rel="noopener">\n  <img src="${origin}/report/${shareId}/badge.svg" alt="mySeo SEO Skoru" width="212" height="56"/>\n</a>`;
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(snippet);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      window.prompt("Rozet kodu:", snippet);
+    }
+  };
+
+  return (
+    <section
+      className="hr-no-print hr-in flex flex-col gap-4 rounded-2xl border border-base-300 bg-base-100 p-6"
+      style={{ animationDelay: "260ms" }}
+    >
+      <div>
+        <h3 className="font-bold tracking-tight">Rozeti sitene ekle</h3>
+        <p className="mt-0.5 text-sm text-base-content/60">
+          Skorunu sitende göster, ziyaretçilerin güvenini kazan.
+        </p>
+      </div>
+      <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+        {origin && (
+          <img
+            src={`${origin}/report/${shareId}/badge.svg`}
+            alt="mySeo SEO Skoru"
+            width={212}
+            height={56}
+            className="shrink-0"
+          />
+        )}
+        <div className="w-full flex-1">
+          <pre className="overflow-x-auto rounded-xl bg-base-200/60 p-3 font-mono text-xs whitespace-pre text-base-content/70">
+            {snippet}
+          </pre>
+          <button
+            onClick={copy}
+            className="hr-cta mt-2 inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold"
+          >
+            {copied ? (
+              <>
+                <Check className="size-4" /> Kopyalandı
+              </>
+            ) : (
+              <>
+                <Code className="size-4" /> Kodu kopyala
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /** Weekly-monitoring opt-in for a domain. */
 export function MonitorCard({
   domain,
@@ -41,6 +104,7 @@ export function MonitorCard({
   score: number;
 }) {
   const [email, setEmail] = React.useState("");
+  const [token, setToken] = React.useState<string | null>(null);
   const [state, setState] = React.useState<
     "idle" | "saving" | "done" | "error"
   >("idle");
@@ -55,7 +119,13 @@ export function MonitorCard({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim(), domain, score }),
       });
-      setState(res.ok ? "done" : "error");
+      if (res.ok) {
+        const data: { token?: string } = await res.json();
+        setToken(data.token ?? null);
+        setState("done");
+      } else {
+        setState("error");
+      }
     } catch {
       setState("error");
     }
@@ -79,9 +149,20 @@ export function MonitorCard({
       </div>
 
       {state === "done" ? (
-        <p className="inline-flex items-center gap-2 text-sm font-medium text-success">
-          <Check className="size-4" /> Eklendi, skor değişince haber vereceğiz.
-        </p>
+        <div className="flex flex-col items-start gap-1 sm:items-end">
+          <p className="inline-flex items-center gap-2 text-sm font-medium text-success">
+            <Check className="size-4" /> Eklendi, skor değişince haber
+            vereceğiz.
+          </p>
+          {token && (
+            <a
+              href={`/izleme/${token}`}
+              className="hr-accent text-sm font-medium hover:underline"
+            >
+              İzleme panelini aç →
+            </a>
+          )}
+        </div>
       ) : (
         <form
           onSubmit={submit}
