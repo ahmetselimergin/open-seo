@@ -4,7 +4,15 @@ import { createFileRoute } from "@tanstack/react-router";
 // so they are intentionally excluded.
 function handleSitemap(request: Request): Response {
   const origin = new URL(request.url).origin;
-  const paths = ["/", "/gizlilik", "/kullanim-kosullari"];
+  const paths = [
+    "/",
+    "/araclar",
+    "/araclar/meta",
+    "/karsilastir",
+    "/rehber",
+    "/gizlilik",
+    "/kullanim-kosullari",
+  ];
   const urls = paths
     .map((p) => `  <url><loc>${origin}${p}</loc></url>`)
     .join("\n");

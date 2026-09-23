@@ -102,7 +102,31 @@ function SiteFooter() {
           <ShieldCheck className="size-4" />
           Ücretsiz, kayıt gerektirmez
         </p>
-        <nav className="flex gap-4 text-sm text-base-content/55">
+        <nav className="flex flex-wrap gap-4 text-sm text-base-content/55">
+          <a
+            href="/araclar"
+            className="transition-colors hover:text-base-content"
+          >
+            Araçlar
+          </a>
+          <a
+            href="/rehber"
+            className="transition-colors hover:text-base-content"
+          >
+            Rehber
+          </a>
+          <a
+            href="/karsilastir"
+            className="transition-colors hover:text-base-content"
+          >
+            Karşılaştır
+          </a>
+          <a
+            href="/araclar/meta"
+            className="transition-colors hover:text-base-content"
+          >
+            Meta Kontrol
+          </a>
           <a
             href="/gizlilik"
             className="transition-colors hover:text-base-content"

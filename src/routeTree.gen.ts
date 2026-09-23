@@ -13,12 +13,14 @@ import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as RehberRouteImport } from './routes/rehber'
 import { Route as KullanimKosullariRouteImport } from './routes/kullanim-kosullari'
 import { Route as KarsilastirRouteImport } from './routes/karsilastir'
 import { Route as HealthReportRouteImport } from './routes/health-report'
 import { Route as GizlilikRouteImport } from './routes/gizlilik'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AuthErrorRouteImport } from './routes/auth-error'
+import { Route as AraclarRouteImport } from './routes/araclar'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as ProjectRouteRouteImport } from './routes/_project/route'
@@ -27,6 +29,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ReportIdRouteImport } from './routes/report.$id'
 import { Route as RReportIdRouteImport } from './routes/r/$reportId'
 import { Route as IzlemeTokenRouteImport } from './routes/izleme.$token'
+import { Route as AraclarMetaRouteImport } from './routes/araclar.meta'
 import { Route as ApiHealthReportRouteImport } from './routes/api/health-report'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as AcceptInvitationIdRouteImport } from './routes/accept-invitation.$id'
@@ -49,6 +52,7 @@ import { Route as STokenRawRouteImport } from './routes/s/$token/raw'
 import { Route as STokenOgDotpngRouteImport } from './routes/s/$token/og[.]png'
 import { Route as ReportIdOgDotpngRouteImport } from './routes/report.$id.og[.]png'
 import { Route as ReportIdBadgeDotsvgRouteImport } from './routes/report.$id.badge[.]svg'
+import { Route as ApiToolsMetaRouteImport } from './routes/api/tools.meta'
 import { Route as ApiHealthReportMonitorRouteImport } from './routes/api/health-report.monitor'
 import { Route as ApiHealthReportCompareRouteImport } from './routes/api/health-report.compare'
 import { Route as ApiHealthReportIdRouteImport } from './routes/api/health-report.$id'
@@ -106,6 +110,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RehberRoute = RehberRouteImport.update({
+  id: '/rehber',
+  path: '/rehber',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const KullanimKosullariRoute = KullanimKosullariRouteImport.update({
   id: '/kullanim-kosullari',
   path: '/kullanim-kosullari',
@@ -134,6 +143,11 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
 const AuthErrorRoute = AuthErrorRouteImport.update({
   id: '/auth-error',
   path: '/auth-error',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AraclarRoute = AraclarRouteImport.update({
+  id: '/araclar',
+  path: '/araclar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -171,6 +185,11 @@ const IzlemeTokenRoute = IzlemeTokenRouteImport.update({
   id: '/izleme/$token',
   path: '/izleme/$token',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AraclarMetaRoute = AraclarMetaRouteImport.update({
+  id: '/meta',
+  path: '/meta',
+  getParentRoute: () => AraclarRoute,
 } as any)
 const ApiHealthReportRoute = ApiHealthReportRouteImport.update({
   id: '/api/health-report',
@@ -284,6 +303,11 @@ const ReportIdBadgeDotsvgRoute = ReportIdBadgeDotsvgRouteImport.update({
   id: '/badge.svg',
   path: '/badge.svg',
   getParentRoute: () => ReportIdRoute,
+} as any)
+const ApiToolsMetaRoute = ApiToolsMetaRouteImport.update({
+  id: '/api/tools/meta',
+  path: '/api/tools/meta',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiHealthReportMonitorRoute = ApiHealthReportMonitorRouteImport.update({
   id: '/monitor',
@@ -488,12 +512,14 @@ const ProjectPProjectIdAuditIssuesResultIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/araclar': typeof AraclarRouteWithChildren
   '/auth-error': typeof AuthErrorRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/gizlilik': typeof GizlilikRoute
   '/health-report': typeof HealthReportRoute
   '/karsilastir': typeof KarsilastirRoute
   '/kullanim-kosullari': typeof KullanimKosullariRoute
+  '/rehber': typeof RehberRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -513,6 +539,7 @@ export interface FileRoutesByFullPath {
   '/accept-invitation/$id': typeof AcceptInvitationIdRoute
   '/api/health': typeof ApiHealthRoute
   '/api/health-report': typeof ApiHealthReportRouteWithChildren
+  '/araclar/meta': typeof AraclarMetaRoute
   '/izleme/$token': typeof IzlemeTokenRoute
   '/r/$reportId': typeof RReportIdRoute
   '/report/$id': typeof ReportIdRouteWithChildren
@@ -525,6 +552,7 @@ export interface FileRoutesByFullPath {
   '/api/health-report/$id': typeof ApiHealthReportIdRoute
   '/api/health-report/compare': typeof ApiHealthReportCompareRoute
   '/api/health-report/monitor': typeof ApiHealthReportMonitorRouteWithChildren
+  '/api/tools/meta': typeof ApiToolsMetaRoute
   '/report/$id/badge.svg': typeof ReportIdBadgeDotsvgRoute
   '/report/$id/og.png': typeof ReportIdOgDotpngRoute
   '/s/$token/og.png': typeof STokenOgDotpngRoute
@@ -562,12 +590,14 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/araclar': typeof AraclarRouteWithChildren
   '/auth-error': typeof AuthErrorRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/gizlilik': typeof GizlilikRoute
   '/health-report': typeof HealthReportRoute
   '/karsilastir': typeof KarsilastirRoute
   '/kullanim-kosullari': typeof KullanimKosullariRoute
+  '/rehber': typeof RehberRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -586,6 +616,7 @@ export interface FileRoutesByTo {
   '/accept-invitation/$id': typeof AcceptInvitationIdRoute
   '/api/health': typeof ApiHealthRoute
   '/api/health-report': typeof ApiHealthReportRouteWithChildren
+  '/araclar/meta': typeof AraclarMetaRoute
   '/izleme/$token': typeof IzlemeTokenRoute
   '/r/$reportId': typeof RReportIdRoute
   '/report/$id': typeof ReportIdRouteWithChildren
@@ -597,6 +628,7 @@ export interface FileRoutesByTo {
   '/api/health-report/$id': typeof ApiHealthReportIdRoute
   '/api/health-report/compare': typeof ApiHealthReportCompareRoute
   '/api/health-report/monitor': typeof ApiHealthReportMonitorRouteWithChildren
+  '/api/tools/meta': typeof ApiToolsMetaRoute
   '/report/$id/badge.svg': typeof ReportIdBadgeDotsvgRoute
   '/report/$id/og.png': typeof ReportIdOgDotpngRoute
   '/s/$token/og.png': typeof STokenOgDotpngRoute
@@ -636,12 +668,14 @@ export interface FileRoutesById {
   '/_project': typeof ProjectRouteRouteWithChildren
   '/_auth': typeof AuthRouteWithChildren
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/araclar': typeof AraclarRouteWithChildren
   '/auth-error': typeof AuthErrorRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/gizlilik': typeof GizlilikRoute
   '/health-report': typeof HealthReportRoute
   '/karsilastir': typeof KarsilastirRoute
   '/kullanim-kosullari': typeof KullanimKosullariRoute
+  '/rehber': typeof RehberRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -661,6 +695,7 @@ export interface FileRoutesById {
   '/accept-invitation/$id': typeof AcceptInvitationIdRoute
   '/api/health': typeof ApiHealthRoute
   '/api/health-report': typeof ApiHealthReportRouteWithChildren
+  '/araclar/meta': typeof AraclarMetaRoute
   '/izleme/$token': typeof IzlemeTokenRoute
   '/r/$reportId': typeof RReportIdRoute
   '/report/$id': typeof ReportIdRouteWithChildren
@@ -673,6 +708,7 @@ export interface FileRoutesById {
   '/api/health-report/$id': typeof ApiHealthReportIdRoute
   '/api/health-report/compare': typeof ApiHealthReportCompareRoute
   '/api/health-report/monitor': typeof ApiHealthReportMonitorRouteWithChildren
+  '/api/tools/meta': typeof ApiToolsMetaRoute
   '/report/$id/badge.svg': typeof ReportIdBadgeDotsvgRoute
   '/report/$id/og.png': typeof ReportIdOgDotpngRoute
   '/s/$token/og.png': typeof STokenOgDotpngRoute
@@ -712,12 +748,14 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/araclar'
     | '/auth-error'
     | '/forgot-password'
     | '/gizlilik'
     | '/health-report'
     | '/karsilastir'
     | '/kullanim-kosullari'
+    | '/rehber'
     | '/reset-password'
     | '/robots.txt'
     | '/sitemap.xml'
@@ -737,6 +775,7 @@ export interface FileRouteTypes {
     | '/accept-invitation/$id'
     | '/api/health'
     | '/api/health-report'
+    | '/araclar/meta'
     | '/izleme/$token'
     | '/r/$reportId'
     | '/report/$id'
@@ -749,6 +788,7 @@ export interface FileRouteTypes {
     | '/api/health-report/$id'
     | '/api/health-report/compare'
     | '/api/health-report/monitor'
+    | '/api/tools/meta'
     | '/report/$id/badge.svg'
     | '/report/$id/og.png'
     | '/s/$token/og.png'
@@ -786,12 +826,14 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/araclar'
     | '/auth-error'
     | '/forgot-password'
     | '/gizlilik'
     | '/health-report'
     | '/karsilastir'
     | '/kullanim-kosullari'
+    | '/rehber'
     | '/reset-password'
     | '/robots.txt'
     | '/sitemap.xml'
@@ -810,6 +852,7 @@ export interface FileRouteTypes {
     | '/accept-invitation/$id'
     | '/api/health'
     | '/api/health-report'
+    | '/araclar/meta'
     | '/izleme/$token'
     | '/r/$reportId'
     | '/report/$id'
@@ -821,6 +864,7 @@ export interface FileRouteTypes {
     | '/api/health-report/$id'
     | '/api/health-report/compare'
     | '/api/health-report/monitor'
+    | '/api/tools/meta'
     | '/report/$id/badge.svg'
     | '/report/$id/og.png'
     | '/s/$token/og.png'
@@ -859,12 +903,14 @@ export interface FileRouteTypes {
     | '/_project'
     | '/_auth'
     | '/_authenticated'
+    | '/araclar'
     | '/auth-error'
     | '/forgot-password'
     | '/gizlilik'
     | '/health-report'
     | '/karsilastir'
     | '/kullanim-kosullari'
+    | '/rehber'
     | '/reset-password'
     | '/robots.txt'
     | '/sitemap.xml'
@@ -884,6 +930,7 @@ export interface FileRouteTypes {
     | '/accept-invitation/$id'
     | '/api/health'
     | '/api/health-report'
+    | '/araclar/meta'
     | '/izleme/$token'
     | '/r/$reportId'
     | '/report/$id'
@@ -896,6 +943,7 @@ export interface FileRouteTypes {
     | '/api/health-report/$id'
     | '/api/health-report/compare'
     | '/api/health-report/monitor'
+    | '/api/tools/meta'
     | '/report/$id/badge.svg'
     | '/report/$id/og.png'
     | '/s/$token/og.png'
@@ -938,12 +986,14 @@ export interface RootRouteChildren {
   ProjectRouteRoute: typeof ProjectRouteRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  AraclarRoute: typeof AraclarRouteWithChildren
   AuthErrorRoute: typeof AuthErrorRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   GizlilikRoute: typeof GizlilikRoute
   HealthReportRoute: typeof HealthReportRoute
   KarsilastirRoute: typeof KarsilastirRoute
   KullanimKosullariRoute: typeof KullanimKosullariRoute
+  RehberRoute: typeof RehberRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -957,6 +1007,7 @@ export interface RootRouteChildren {
   ReportIdRoute: typeof ReportIdRouteWithChildren
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiAutumnSplatRoute: typeof ApiAutumnSplatRoute
+  ApiToolsMetaRoute: typeof ApiToolsMetaRoute
   STokenOgDotpngRoute: typeof STokenOgDotpngRoute
   STokenRawRoute: typeof STokenRawRoute
   STokenIndexRoute: typeof STokenIndexRoute
@@ -992,6 +1043,13 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rehber': {
+      id: '/rehber'
+      path: '/rehber'
+      fullPath: '/rehber'
+      preLoaderRoute: typeof RehberRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/kullanim-kosullari': {
@@ -1034,6 +1092,13 @@ declare module '@tanstack/react-router' {
       path: '/auth-error'
       fullPath: '/auth-error'
       preLoaderRoute: typeof AuthErrorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/araclar': {
+      id: '/araclar'
+      path: '/araclar'
+      fullPath: '/araclar'
+      preLoaderRoute: typeof AraclarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -1091,6 +1156,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/izleme/$token'
       preLoaderRoute: typeof IzlemeTokenRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/araclar/meta': {
+      id: '/araclar/meta'
+      path: '/meta'
+      fullPath: '/araclar/meta'
+      preLoaderRoute: typeof AraclarMetaRouteImport
+      parentRoute: typeof AraclarRoute
     }
     '/api/health-report': {
       id: '/api/health-report'
@@ -1245,6 +1317,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/report/$id/badge.svg'
       preLoaderRoute: typeof ReportIdBadgeDotsvgRouteImport
       parentRoute: typeof ReportIdRoute
+    }
+    '/api/tools/meta': {
+      id: '/api/tools/meta'
+      path: '/api/tools/meta'
+      fullPath: '/api/tools/meta'
+      preLoaderRoute: typeof ApiToolsMetaRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/health-report/monitor': {
       id: '/api/health-report/monitor'
@@ -1686,6 +1765,17 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
+interface AraclarRouteChildren {
+  AraclarMetaRoute: typeof AraclarMetaRoute
+}
+
+const AraclarRouteChildren: AraclarRouteChildren = {
+  AraclarMetaRoute: AraclarMetaRoute,
+}
+
+const AraclarRouteWithChildren =
+  AraclarRoute._addFileChildren(AraclarRouteChildren)
+
 interface ApiHealthReportMonitorRouteChildren {
   ApiHealthReportMonitorTokenRoute: typeof ApiHealthReportMonitorTokenRoute
   ApiHealthReportMonitorUnsubscribeRoute: typeof ApiHealthReportMonitorUnsubscribeRoute
@@ -1739,12 +1829,14 @@ const rootRouteChildren: RootRouteChildren = {
   ProjectRouteRoute: ProjectRouteRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  AraclarRoute: AraclarRouteWithChildren,
   AuthErrorRoute: AuthErrorRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   GizlilikRoute: GizlilikRoute,
   HealthReportRoute: HealthReportRoute,
   KarsilastirRoute: KarsilastirRoute,
   KullanimKosullariRoute: KullanimKosullariRoute,
+  RehberRoute: RehberRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
@@ -1759,6 +1851,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReportIdRoute: ReportIdRouteWithChildren,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiAutumnSplatRoute: ApiAutumnSplatRoute,
+  ApiToolsMetaRoute: ApiToolsMetaRoute,
   STokenOgDotpngRoute: STokenOgDotpngRoute,
   STokenRawRoute: STokenRawRoute,
   STokenIndexRoute: STokenIndexRoute,

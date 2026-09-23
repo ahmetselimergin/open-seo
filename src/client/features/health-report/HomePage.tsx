@@ -58,12 +58,20 @@ export function HomePage() {
           <span className="text-lg font-bold tracking-tight">
             my<span className="hr-accent">Seo</span>
           </span>
-          <a
-            href="/karsilastir"
-            className="text-sm text-base-content/60 transition-colors hover:text-base-content"
-          >
-            Karşılaştır
-          </a>
+          <nav className="flex gap-5 text-sm text-base-content/60">
+            <a
+              href="/araclar"
+              className="transition-colors hover:text-base-content"
+            >
+              Araçlar
+            </a>
+            <a
+              href="/karsilastir"
+              className="transition-colors hover:text-base-content"
+            >
+              Karşılaştır
+            </a>
+          </nav>
         </div>
       </header>
 
