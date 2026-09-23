@@ -16,6 +16,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RehberRouteImport } from './routes/rehber'
 import { Route as KullanimKosullariRouteImport } from './routes/kullanim-kosullari'
 import { Route as KarsilastirRouteImport } from './routes/karsilastir'
+import { Route as HesapRouteImport } from './routes/hesap'
 import { Route as HealthReportRouteImport } from './routes/health-report'
 import { Route as GizlilikRouteImport } from './routes/gizlilik'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
@@ -58,6 +59,8 @@ import { Route as ApiHealthReportCompareRouteImport } from './routes/api/health-
 import { Route as ApiHealthReportIdRouteImport } from './routes/api/health-report.$id'
 import { Route as ApiAutumnSplatRouteImport } from './routes/api/autumn/$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiAccountLogoutRouteImport } from './routes/api/account.logout'
+import { Route as ApiAccountLoginRouteImport } from './routes/api/account.login'
 import { Route as AppSettingsOrganizationRouteImport } from './routes/_app/settings/organization'
 import { Route as AppHelpOpenrouterApiKeyRouteImport } from './routes/_app/help/openrouter-api-key'
 import { Route as AppHelpDataforseoApiKeyRouteImport } from './routes/_app/help/dataforseo-api-key'
@@ -123,6 +126,11 @@ const KullanimKosullariRoute = KullanimKosullariRouteImport.update({
 const KarsilastirRoute = KarsilastirRouteImport.update({
   id: '/karsilastir',
   path: '/karsilastir',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HesapRoute = HesapRouteImport.update({
+  id: '/hesap',
+  path: '/hesap',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HealthReportRoute = HealthReportRouteImport.update({
@@ -334,6 +342,16 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAccountLogoutRoute = ApiAccountLogoutRouteImport.update({
+  id: '/api/account/logout',
+  path: '/api/account/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAccountLoginRoute = ApiAccountLoginRouteImport.update({
+  id: '/api/account/login',
+  path: '/api/account/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppSettingsOrganizationRoute = AppSettingsOrganizationRouteImport.update({
   id: '/organization',
   path: '/organization',
@@ -517,6 +535,7 @@ export interface FileRoutesByFullPath {
   '/forgot-password': typeof ForgotPasswordRoute
   '/gizlilik': typeof GizlilikRoute
   '/health-report': typeof HealthReportRoute
+  '/hesap': typeof HesapRoute
   '/karsilastir': typeof KarsilastirRoute
   '/kullanim-kosullari': typeof KullanimKosullariRoute
   '/rehber': typeof RehberRoute
@@ -547,6 +566,8 @@ export interface FileRoutesByFullPath {
   '/help/dataforseo-api-key': typeof AppHelpDataforseoApiKeyRoute
   '/help/openrouter-api-key': typeof AppHelpOpenrouterApiKeyRoute
   '/settings/organization': typeof AppSettingsOrganizationRoute
+  '/api/account/login': typeof ApiAccountLoginRoute
+  '/api/account/logout': typeof ApiAccountLogoutRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/autumn/$': typeof ApiAutumnSplatRoute
   '/api/health-report/$id': typeof ApiHealthReportIdRoute
@@ -595,6 +616,7 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
   '/gizlilik': typeof GizlilikRoute
   '/health-report': typeof HealthReportRoute
+  '/hesap': typeof HesapRoute
   '/karsilastir': typeof KarsilastirRoute
   '/kullanim-kosullari': typeof KullanimKosullariRoute
   '/rehber': typeof RehberRoute
@@ -623,6 +645,8 @@ export interface FileRoutesByTo {
   '/help/dataforseo-api-key': typeof AppHelpDataforseoApiKeyRoute
   '/help/openrouter-api-key': typeof AppHelpOpenrouterApiKeyRoute
   '/settings/organization': typeof AppSettingsOrganizationRoute
+  '/api/account/login': typeof ApiAccountLoginRoute
+  '/api/account/logout': typeof ApiAccountLogoutRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/autumn/$': typeof ApiAutumnSplatRoute
   '/api/health-report/$id': typeof ApiHealthReportIdRoute
@@ -673,6 +697,7 @@ export interface FileRoutesById {
   '/forgot-password': typeof ForgotPasswordRoute
   '/gizlilik': typeof GizlilikRoute
   '/health-report': typeof HealthReportRoute
+  '/hesap': typeof HesapRoute
   '/karsilastir': typeof KarsilastirRoute
   '/kullanim-kosullari': typeof KullanimKosullariRoute
   '/rehber': typeof RehberRoute
@@ -703,6 +728,8 @@ export interface FileRoutesById {
   '/_app/help/dataforseo-api-key': typeof AppHelpDataforseoApiKeyRoute
   '/_app/help/openrouter-api-key': typeof AppHelpOpenrouterApiKeyRoute
   '/_app/settings/organization': typeof AppSettingsOrganizationRoute
+  '/api/account/login': typeof ApiAccountLoginRoute
+  '/api/account/logout': typeof ApiAccountLogoutRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/autumn/$': typeof ApiAutumnSplatRoute
   '/api/health-report/$id': typeof ApiHealthReportIdRoute
@@ -753,6 +780,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/gizlilik'
     | '/health-report'
+    | '/hesap'
     | '/karsilastir'
     | '/kullanim-kosullari'
     | '/rehber'
@@ -783,6 +811,8 @@ export interface FileRouteTypes {
     | '/help/dataforseo-api-key'
     | '/help/openrouter-api-key'
     | '/settings/organization'
+    | '/api/account/login'
+    | '/api/account/logout'
     | '/api/auth/$'
     | '/api/autumn/$'
     | '/api/health-report/$id'
@@ -831,6 +861,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/gizlilik'
     | '/health-report'
+    | '/hesap'
     | '/karsilastir'
     | '/kullanim-kosullari'
     | '/rehber'
@@ -859,6 +890,8 @@ export interface FileRouteTypes {
     | '/help/dataforseo-api-key'
     | '/help/openrouter-api-key'
     | '/settings/organization'
+    | '/api/account/login'
+    | '/api/account/logout'
     | '/api/auth/$'
     | '/api/autumn/$'
     | '/api/health-report/$id'
@@ -908,6 +941,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/gizlilik'
     | '/health-report'
+    | '/hesap'
     | '/karsilastir'
     | '/kullanim-kosullari'
     | '/rehber'
@@ -938,6 +972,8 @@ export interface FileRouteTypes {
     | '/_app/help/dataforseo-api-key'
     | '/_app/help/openrouter-api-key'
     | '/_app/settings/organization'
+    | '/api/account/login'
+    | '/api/account/logout'
     | '/api/auth/$'
     | '/api/autumn/$'
     | '/api/health-report/$id'
@@ -991,6 +1027,7 @@ export interface RootRouteChildren {
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   GizlilikRoute: typeof GizlilikRoute
   HealthReportRoute: typeof HealthReportRoute
+  HesapRoute: typeof HesapRoute
   KarsilastirRoute: typeof KarsilastirRoute
   KullanimKosullariRoute: typeof KullanimKosullariRoute
   RehberRoute: typeof RehberRoute
@@ -1005,6 +1042,8 @@ export interface RootRouteChildren {
   IzlemeTokenRoute: typeof IzlemeTokenRoute
   RReportIdRoute: typeof RReportIdRoute
   ReportIdRoute: typeof ReportIdRouteWithChildren
+  ApiAccountLoginRoute: typeof ApiAccountLoginRoute
+  ApiAccountLogoutRoute: typeof ApiAccountLogoutRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiAutumnSplatRoute: typeof ApiAutumnSplatRoute
   ApiToolsMetaRoute: typeof ApiToolsMetaRoute
@@ -1064,6 +1103,13 @@ declare module '@tanstack/react-router' {
       path: '/karsilastir'
       fullPath: '/karsilastir'
       preLoaderRoute: typeof KarsilastirRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hesap': {
+      id: '/hesap'
+      path: '/hesap'
+      fullPath: '/hesap'
+      preLoaderRoute: typeof HesapRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/health-report': {
@@ -1358,6 +1404,20 @@ declare module '@tanstack/react-router' {
       path: '/api/auth/$'
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/account/logout': {
+      id: '/api/account/logout'
+      path: '/api/account/logout'
+      fullPath: '/api/account/logout'
+      preLoaderRoute: typeof ApiAccountLogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/account/login': {
+      id: '/api/account/login'
+      path: '/api/account/login'
+      fullPath: '/api/account/login'
+      preLoaderRoute: typeof ApiAccountLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app/settings/organization': {
@@ -1834,6 +1894,7 @@ const rootRouteChildren: RootRouteChildren = {
   ForgotPasswordRoute: ForgotPasswordRoute,
   GizlilikRoute: GizlilikRoute,
   HealthReportRoute: HealthReportRoute,
+  HesapRoute: HesapRoute,
   KarsilastirRoute: KarsilastirRoute,
   KullanimKosullariRoute: KullanimKosullariRoute,
   RehberRoute: RehberRoute,
@@ -1849,6 +1910,8 @@ const rootRouteChildren: RootRouteChildren = {
   IzlemeTokenRoute: IzlemeTokenRoute,
   RReportIdRoute: RReportIdRoute,
   ReportIdRoute: ReportIdRouteWithChildren,
+  ApiAccountLoginRoute: ApiAccountLoginRoute,
+  ApiAccountLogoutRoute: ApiAccountLogoutRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiAutumnSplatRoute: ApiAutumnSplatRoute,
   ApiToolsMetaRoute: ApiToolsMetaRoute,

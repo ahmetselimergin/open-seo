@@ -62,6 +62,46 @@ export async function sendHealthReportEmail(input: {
 }
 
 /**
+ * Best-effort magic-link (passwordless sign-in) email. Enabled only when
+ * LOOPS_API_KEY and LOOPS_MAGIC_LINK_TEMPLATE_ID are set; otherwise the link is
+ * logged (so local dev can complete the flow). Never throws.
+ */
+export async function sendMagicLinkEmail(input: {
+  email: string;
+  loginUrl: string;
+}): Promise<void> {
+  const apiKey = getOptionalEnv("LOOPS_API_KEY");
+  const templateId = getOptionalEnv("LOOPS_MAGIC_LINK_TEMPLATE_ID");
+
+  if (!apiKey || !templateId) {
+    console.info(`[account] magic link for ${input.email}: ${input.loginUrl}`);
+    return;
+  }
+  try {
+    const response = await fetch(LOOPS_TRANSACTIONAL_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        transactionalId: templateId,
+        email: input.email,
+        dataVariables: { loginUrl: input.loginUrl },
+      }),
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (!response.ok) {
+      console.error(
+        `[account] magic link email failed (${response.status}) for ${input.email}`,
+      );
+    }
+  } catch (error) {
+    console.error("[account] magic link email error:", error);
+  }
+}
+
+/**
  * Best-effort weekly-monitoring alert when a site's score changes. Enabled only
  * when LOOPS_API_KEY and LOOPS_HEALTH_ALERT_TEMPLATE_ID are set; never throws.
  */

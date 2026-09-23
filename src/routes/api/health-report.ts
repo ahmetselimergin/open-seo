@@ -16,6 +16,7 @@ import {
   captureHealthEvent,
   visitorId,
 } from "@/server/features/health-report/analytics";
+import { addReportToAccount } from "@/server/features/health-report/account-store";
 import { buildHealthReport } from "@/shared/health-report";
 import { healthReportRequestSchema } from "@/types/schemas/health-report";
 
@@ -76,6 +77,14 @@ async function handleHealthReport(request: Request): Promise<Response> {
       const shareUrl = `${new URL(request.url).origin}/report/${id}`;
       waitUntil(
         sendHealthReportEmail({ email: trimmedEmail, report, shareUrl }),
+      );
+      waitUntil(
+        addReportToAccount(trimmedEmail, {
+          id,
+          domain: report.domain,
+          score: report.score,
+          createdAt: new Date().toISOString(),
+        }),
       );
     }
 

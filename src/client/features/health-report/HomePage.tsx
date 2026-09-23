@@ -71,6 +71,12 @@ export function HomePage() {
             >
               Karşılaştır
             </a>
+            <a
+              href="/hesap"
+              className="transition-colors hover:text-base-content"
+            >
+              Hesabım
+            </a>
           </nav>
         </div>
       </header>

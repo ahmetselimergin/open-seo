@@ -11,6 +11,7 @@ import {
   captureHealthEvent,
   visitorId,
 } from "@/server/features/health-report/analytics";
+import { addMonitorToAccount } from "@/server/features/health-report/account-store";
 
 // Opt in to weekly monitoring for a domain. Stores (email, domain) and the
 // current score as the baseline; the weekly cron re-scans and emails on change.
@@ -51,6 +52,7 @@ async function handleSubscribe(request: Request): Promise<Response> {
     score: parsed.data.score ?? null,
   });
 
+  waitUntil(addMonitorToAccount(parsed.data.email.trim(), token));
   waitUntil(
     visitorId(request).then((id) =>
       captureHealthEvent(id, "health_report_monitor_subscribed", { domain }),
