@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildHealthReport,
+  localizeReport,
   type HealthReportInput,
 } from "@/shared/health-report";
 
@@ -112,6 +113,46 @@ describe("buildHealthReport", () => {
       baseInput({ origin: "https://www.example.com" }),
     );
     expect(report.domain).toBe("example.com");
+  });
+
+  it("stores the source issue type on action-plan items", () => {
+    const report = buildHealthReport(
+      baseInput({
+        issues: [
+          { issueType: "missing-title", pageUrl: "https://example.com/a" },
+        ],
+      }),
+    );
+    expect(report.actionPlan[0].issueType).toBe("missing-title");
+    // A clean crawl's evergreen items are marked issueType: null.
+    const clean = buildHealthReport(baseInput());
+    expect(clean.actionPlan.every((i) => i.issueType === null)).toBe(true);
+  });
+
+  it("re-localizes a stored report into English", () => {
+    const report = buildHealthReport(
+      baseInput({
+        issues: [
+          { issueType: "missing-title", pageUrl: "https://example.com/a" },
+        ],
+      }),
+    );
+    const en = localizeReport(report, "en");
+    // 1 critical page -> 12 penalty -> score 88 -> "Good" band.
+    expect(en.grade).toBe("Good");
+    expect(en.summary).not.toBe(report.summary);
+    expect(en.summary).toMatch(/pages/);
+    expect(en.topProblems[0].title).not.toBe(report.topProblems[0].title);
+    expect(en.actionPlan[0].task).not.toBe(report.actionPlan[0].task);
+    // Language-neutral numbers are untouched.
+    expect(en.score).toBe(report.score);
+    expect(en.issueCounts).toEqual(report.issueCounts);
+  });
+
+  it("localizes the evergreen plan for a clean crawl", () => {
+    const en = localizeReport(buildHealthReport(baseInput()), "en");
+    expect(en.grade).toBe("Excellent");
+    expect(en.actionPlan[0].task).toMatch(/titles and descriptions/);
   });
 
   it("orders the action plan by week", () => {

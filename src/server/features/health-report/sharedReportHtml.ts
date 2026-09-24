@@ -1,9 +1,83 @@
-import type { HealthReport } from "@/shared/health-report";
+import {
+  localizeReport,
+  type HealthReport,
+  type ReportLang,
+} from "@/shared/health-report";
 
 // Server-rendered HTML for a shared report at /report/<id>. Unlike the app's
 // client-rendered pages, this returns real markup so social crawlers and
 // search engines get proper <title>/OpenGraph meta AND readable content.
 // The mySeo cinematic dark theme is inlined so the page is self-contained.
+
+interface SharedCopy {
+  htmlLang: string;
+  scoreSuffix: string;
+  overallScore: string;
+  pagesScanned: (n: number) => string;
+  firstN: string;
+  critical: string;
+  warning: string;
+  info: string;
+  pagesWord: string;
+  noIssuesTitle: string;
+  noIssuesBody: string;
+  topProblems: string;
+  whatItMeans: string;
+  howToFix: string;
+  planHeading: string;
+  weekLabel: (n: number) => string;
+  download: string;
+  ctaHeading: string;
+  ctaBody: string;
+  ctaButton: string;
+}
+
+const SHARED_COPY: Record<ReportLang, SharedCopy> = {
+  tr: {
+    htmlLang: "tr",
+    scoreSuffix: "SEO sağlık skoru",
+    overallScore: "Genel sağlık skoru",
+    pagesScanned: (n) => `${n} sayfa tarandı`,
+    firstN: " · ilk 50 sayfa",
+    critical: "Acil",
+    warning: "Orta",
+    info: "Küçük",
+    pagesWord: "sayfa",
+    noIssuesTitle: "Sorun bulunamadı",
+    noIssuesBody: "Taranan sayfalarda acil bir sorun çıkmadı.",
+    topProblems: "Öncelikli 3 sorun",
+    whatItMeans: "Ne anlama geliyor?",
+    howToFix: "Nasıl düzeltilir?",
+    planHeading: "30 günlük eylem planı",
+    weekLabel: (n) => `${n}. hafta`,
+    download: "İndir",
+    ctaHeading: "Kendi sitenizi ücretsiz kontrol edin",
+    ctaBody: "Kayıt gerekmez, saniyeler sürer.",
+    ctaButton: "mySeo ile tara",
+  },
+  en: {
+    htmlLang: "en",
+    scoreSuffix: "SEO health score",
+    overallScore: "Overall health score",
+    pagesScanned: (n) => `${n} pages scanned`,
+    firstN: " · first 50 pages",
+    critical: "Urgent",
+    warning: "Moderate",
+    info: "Minor",
+    pagesWord: "pages",
+    noIssuesTitle: "No issues found",
+    noIssuesBody: "No urgent issues came up on the scanned pages.",
+    topProblems: "Top 3 issues",
+    whatItMeans: "What does it mean?",
+    howToFix: "How to fix it?",
+    planHeading: "30-day action plan",
+    weekLabel: (n) => `Week ${n}`,
+    download: "Download",
+    ctaHeading: "Check your own site for free",
+    ctaBody: "No sign-up, takes seconds.",
+    ctaButton: "Scan with mySeo",
+  },
+};
 
 function esc(value: unknown): string {
   return String(value).replace(
@@ -44,11 +118,11 @@ function gaugeSvg(score: number): string {
   </svg>`;
 }
 
-function problemsHtml(report: HealthReport): string {
+function problemsHtml(report: HealthReport, t: SharedCopy): string {
   if (report.topProblems.length === 0) {
     return `<div class="card ok">
-      <h2>Sorun bulunamadı</h2>
-      <p>Taranan sayfalarda acil bir sorun çıkmadı.</p>
+      <h2>${t.noIssuesTitle}</h2>
+      <p>${t.noIssuesBody}</p>
     </div>`;
   }
   const items = report.topProblems
@@ -57,44 +131,48 @@ function problemsHtml(report: HealthReport): string {
         <div class="prow">
           <span class="pnum" style="background:${severityColor(p.severity)}22;color:${severityColor(p.severity)}">${i + 1}</span>
           <h3>${esc(p.title)}</h3>
-          <span class="pages">${p.affectedPages} sayfa</span>
+          <span class="pages">${p.affectedPages} ${t.pagesWord}</span>
         </div>
         <div class="pgrid">
-          <div><span class="lbl">Ne anlama geliyor?</span><p>${esc(p.whatItMeans)}</p></div>
-          <div><span class="lbl">Nasıl düzeltilir?</span><p>${esc(p.howToFix)}</p></div>
+          <div><span class="lbl">${t.whatItMeans}</span><p>${esc(p.whatItMeans)}</p></div>
+          <div><span class="lbl">${t.howToFix}</span><p>${esc(p.howToFix)}</p></div>
         </div>
       </article>`,
     )
     .join("");
-  return `<h2 class="sech">Öncelikli 3 sorun</h2>${items}`;
+  return `<h2 class="sech">${t.topProblems}</h2>${items}`;
 }
 
-function planHtml(report: HealthReport): string {
+function planHtml(report: HealthReport, t: SharedCopy): string {
   const weeks = [1, 2, 3, 4]
     .map((w) => {
       const tasks = report.actionPlan.filter((a) => a.week === w);
       if (tasks.length === 0) return "";
-      const lis = tasks.map((t) => `<li>${esc(t.task)}</li>`).join("");
-      return `<div class="week"><h4>${w}. hafta</h4><ul>${lis}</ul></div>`;
+      const lis = tasks.map((task) => `<li>${esc(task.task)}</li>`).join("");
+      return `<div class="week"><h4>${t.weekLabel(w)}</h4><ul>${lis}</ul></div>`;
     })
     .join("");
-  return `<h2 class="sech">30 günlük eylem planı</h2><div class="plan">${weeks}</div>`;
+  return `<h2 class="sech">${t.planHeading}</h2><div class="plan">${weeks}</div>`;
 }
 
 export function renderSharedReportHtml(input: {
   report: HealthReport;
   id: string;
   origin: string;
+  lang?: ReportLang;
 }): string {
-  const { report, id, origin } = input;
+  const { id, origin } = input;
+  const lang = input.lang ?? "tr";
+  const t = SHARED_COPY[lang];
+  const report = localizeReport(input.report, lang);
   const shareUrl = `${origin}/report/${esc(id)}`;
   const ogImage = `${origin}/report/${esc(id)}/og.png`;
-  const title = `${esc(report.domain)} — SEO sağlık skoru ${report.score}/100 · mySeo`;
+  const title = `${esc(report.domain)} — ${t.scoreSuffix} ${report.score}/100 · mySeo`;
   const desc = esc(report.summary);
   const accent = "#35c6f4";
 
   return `<!doctype html>
-<html lang="tr">
+<html lang="${t.htmlLang}">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -158,32 +236,32 @@ export function renderSharedReportHtml(input: {
   <div class="wrap">
     <header>
       <a class="brand" href="${origin}/">my<span>Seo</span></a>
-      <button class="btn no-print" onclick="window.print()">İndir</button>
+      <button class="btn no-print" onclick="window.print()">${t.download}</button>
     </header>
 
     <div class="card">
       <div class="score">
         <div class="num">${gaugeSvg(report.score)}<b>${report.score}</b></div>
         <div>
-          <div style="display:flex;align-items:center"><span style="font-size:22px;font-weight:700">Genel sağlık skoru</span><span class="grade">${esc(report.grade)}</span></div>
+          <div style="display:flex;align-items:center"><span style="font-size:22px;font-weight:700">${t.overallScore}</span><span class="grade">${esc(report.grade)}</span></div>
           <p class="summary">${desc}</p>
-          <p class="meta">${esc(report.domain)} · ${report.pagesScanned} sayfa tarandı${report.truncated ? " · ilk 50 sayfa" : ""}</p>
+          <p class="meta">${esc(report.domain)} · ${t.pagesScanned(report.pagesScanned)}${report.truncated ? t.firstN : ""}</p>
           <div class="pills">
-            <span class="pill" style="background:#ef444422;color:#ef4444">${report.issueCounts.critical} Acil</span>
-            <span class="pill" style="background:#f59e0b22;color:#f59e0b">${report.issueCounts.warning} Orta</span>
-            <span class="pill" style="background:#38bdf822;color:#38bdf8">${report.issueCounts.info} Küçük</span>
+            <span class="pill" style="background:#ef444422;color:#ef4444">${report.issueCounts.critical} ${t.critical}</span>
+            <span class="pill" style="background:#f59e0b22;color:#f59e0b">${report.issueCounts.warning} ${t.warning}</span>
+            <span class="pill" style="background:#38bdf822;color:#38bdf8">${report.issueCounts.info} ${t.info}</span>
           </div>
         </div>
       </div>
     </div>
 
-    ${problemsHtml(report)}
-    ${planHtml(report)}
+    ${problemsHtml(report, t)}
+    ${planHtml(report, t)}
 
     <div class="cta no-print">
-      <h3>Kendi sitenizi ücretsiz kontrol edin</h3>
-      <p>Kayıt gerekmez, saniyeler sürer.</p>
-      <a class="btn" href="${origin}/">mySeo ile tara</a>
+      <h3>${t.ctaHeading}</h3>
+      <p>${t.ctaBody}</p>
+      <a class="btn" href="${origin}/">${t.ctaButton}</a>
     </div>
   </div>
 </body>

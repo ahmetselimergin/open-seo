@@ -7,6 +7,10 @@
  * `getIssueCopy` looks copy up safely for an arbitrary string.
  */
 import type { AuditIssueType } from "@/shared/audit-issues";
+import { EN_ISSUE_COPY } from "@/shared/health-report-copy-en";
+
+/** Report language. Kept local so this shared module has no client dependency. */
+export type ReportLang = "tr" | "en";
 
 export interface IssueCopy {
   title: string;
@@ -282,8 +286,22 @@ const ISSUE_COPY: Record<AuditIssueType, IssueCopy> = {
 };
 
 const copyRegistry: Record<string, IssueCopy> = ISSUE_COPY;
+const enRegistry: Record<string, Omit<IssueCopy, "week">> = EN_ISSUE_COPY;
 
-/** Safe lookup for an arbitrary issue-type string; null when unknown. */
-export function getIssueCopy(issueType: string): IssueCopy | null {
-  return copyRegistry[issueType] ?? null;
+/**
+ * Safe lookup for an arbitrary issue-type string; null when unknown.
+ * `lang` selects the language ("tr" default); the neutral `week` always comes
+ * from the Turkish table so the two languages can't drift on scheduling.
+ */
+export function getIssueCopy(
+  issueType: string,
+  lang: ReportLang = "tr",
+): IssueCopy | null {
+  const tr = copyRegistry[issueType];
+  if (!tr) return null;
+  if (lang === "en") {
+    const en = enRegistry[issueType];
+    if (en) return { ...en, week: tr.week };
+  }
+  return tr;
 }

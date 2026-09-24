@@ -14,6 +14,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RehberRouteImport } from './routes/rehber'
+import { Route as OgDotpngRouteImport } from './routes/og[.]png'
 import { Route as KullanimKosullariRouteImport } from './routes/kullanim-kosullari'
 import { Route as KarsilastirRouteImport } from './routes/karsilastir'
 import { Route as HesapRouteImport } from './routes/hesap'
@@ -123,6 +124,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const RehberRoute = RehberRouteImport.update({
   id: '/rehber',
   path: '/rehber',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OgDotpngRoute = OgDotpngRouteImport.update({
+  id: '/og.png',
+  path: '/og.png',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KullanimKosullariRoute = KullanimKosullariRouteImport.update({
@@ -581,6 +587,7 @@ export interface FileRoutesByFullPath {
   '/hesap': typeof HesapRoute
   '/karsilastir': typeof KarsilastirRoute
   '/kullanim-kosullari': typeof KullanimKosullariRoute
+  '/og.png': typeof OgDotpngRoute
   '/rehber': typeof RehberRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -669,6 +676,7 @@ export interface FileRoutesByTo {
   '/hesap': typeof HesapRoute
   '/karsilastir': typeof KarsilastirRoute
   '/kullanim-kosullari': typeof KullanimKosullariRoute
+  '/og.png': typeof OgDotpngRoute
   '/rehber': typeof RehberRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -757,6 +765,7 @@ export interface FileRoutesById {
   '/hesap': typeof HesapRoute
   '/karsilastir': typeof KarsilastirRoute
   '/kullanim-kosullari': typeof KullanimKosullariRoute
+  '/og.png': typeof OgDotpngRoute
   '/rehber': typeof RehberRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -847,6 +856,7 @@ export interface FileRouteTypes {
     | '/hesap'
     | '/karsilastir'
     | '/kullanim-kosullari'
+    | '/og.png'
     | '/rehber'
     | '/reset-password'
     | '/robots.txt'
@@ -935,6 +945,7 @@ export interface FileRouteTypes {
     | '/hesap'
     | '/karsilastir'
     | '/kullanim-kosullari'
+    | '/og.png'
     | '/rehber'
     | '/reset-password'
     | '/robots.txt'
@@ -1022,6 +1033,7 @@ export interface FileRouteTypes {
     | '/hesap'
     | '/karsilastir'
     | '/kullanim-kosullari'
+    | '/og.png'
     | '/rehber'
     | '/reset-password'
     | '/robots.txt'
@@ -1115,6 +1127,7 @@ export interface RootRouteChildren {
   HesapRoute: typeof HesapRoute
   KarsilastirRoute: typeof KarsilastirRoute
   KullanimKosullariRoute: typeof KullanimKosullariRoute
+  OgDotpngRoute: typeof OgDotpngRoute
   RehberRoute: typeof RehberRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
@@ -1177,6 +1190,13 @@ declare module '@tanstack/react-router' {
       path: '/rehber'
       fullPath: '/rehber'
       preLoaderRoute: typeof RehberRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/og.png': {
+      id: '/og.png'
+      path: '/og.png'
+      fullPath: '/og.png'
+      preLoaderRoute: typeof OgDotpngRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/kullanim-kosullari': {
@@ -2041,6 +2061,7 @@ const rootRouteChildren: RootRouteChildren = {
   HesapRoute: HesapRoute,
   KarsilastirRoute: KarsilastirRoute,
   KullanimKosullariRoute: KullanimKosullariRoute,
+  OgDotpngRoute: OgDotpngRoute,
   RehberRoute: RehberRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,

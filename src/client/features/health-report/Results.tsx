@@ -1,6 +1,11 @@
 import * as React from "react";
 import { ArrowLeft, ArrowRight, CheckCircle2, Download } from "lucide-react";
-import type { HealthReport } from "@/shared/health-report";
+import { localizeReport, type HealthReport } from "@/shared/health-report";
+import { useLang } from "@/client/features/health-report/i18n";
+import {
+  resultsCopy,
+  type ResultsCopy,
+} from "@/client/features/health-report/i18n-results";
 import {
   scoreTone,
   severityTone,
@@ -26,6 +31,10 @@ export function Results({
   /** True when viewing someone's shared report (read-only entry point). */
   shared?: boolean;
 }) {
+  const { lang } = useLang();
+  const t = resultsCopy(lang);
+  const r = localizeReport(report, lang);
+
   return (
     <div className="flex flex-col gap-6">
       <div className="hr-in hr-no-print flex items-center justify-between gap-3">
@@ -34,14 +43,14 @@ export function Results({
             href="/"
             className="inline-flex items-center gap-1.5 text-sm font-medium text-base-content/60 transition-colors hover:text-base-content"
           >
-            <ArrowLeft className="size-4" /> Kendi raporunu al
+            <ArrowLeft className="size-4" /> {t.getOwnReport}
           </a>
         ) : (
           <button
             onClick={onReset}
             className="inline-flex items-center gap-1.5 text-sm font-medium text-base-content/60 transition-colors hover:text-base-content"
           >
-            <ArrowLeft className="size-4" /> Yeni rapor
+            <ArrowLeft className="size-4" /> {t.newReport}
           </button>
         )}
         <div className="flex items-center gap-2">
@@ -49,23 +58,23 @@ export function Results({
             onClick={() => window.print()}
             className="inline-flex items-center gap-1.5 rounded-full border border-base-300 px-3.5 py-1.5 text-sm font-medium transition-colors hover:bg-base-100"
           >
-            <Download className="size-4" /> İndir
+            <Download className="size-4" /> {t.download}
           </button>
           {shareId && <ShareButton shareId={shareId} />}
         </div>
       </div>
 
-      <ScoreCard report={report} />
-      <ProblemsSection report={report} />
-      <ActionPlanSection report={report} />
-      <MonitorCard domain={report.domain} score={report.score} />
+      <ScoreCard report={r} t={t} />
+      <ProblemsSection report={r} t={t} lang={lang} />
+      <ActionPlanSection report={r} t={t} />
+      <MonitorCard domain={r.domain} score={r.score} />
       {shareId && <BadgeEmbed shareId={shareId} />}
-      <FooterCta />
+      <FooterCta t={t} />
     </div>
   );
 }
 
-function ScoreCard({ report }: { report: HealthReport }) {
+function ScoreCard({ report, t }: { report: HealthReport; t: ResultsCopy }) {
   const value = useCountUp(report.score);
   const tone = scoreTone(report.score);
   return (
@@ -78,7 +87,7 @@ function ScoreCard({ report }: { report: HealthReport }) {
         <div className="flex-1 text-center sm:text-left">
           <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
             <h2 className="text-2xl font-bold tracking-tight">
-              Genel sağlık skoru
+              {t.overallScore}
             </h2>
             <span
               className={`rounded-full border-0 px-2.5 py-0.5 text-sm font-semibold ${tone.badge}`}
@@ -88,23 +97,23 @@ function ScoreCard({ report }: { report: HealthReport }) {
           </div>
           <p className="mt-2 text-base-content/70">{report.summary}</p>
           <p className="mt-3 text-sm text-base-content/45">
-            {report.pagesScanned} sayfa tarandı
-            {report.truncated && " · ilk 50 sayfa"}
+            {t.pagesScanned(report.pagesScanned)}
+            {report.truncated && t.firstN(50)}
           </p>
           <div className="mt-4 flex flex-wrap justify-center gap-2 sm:justify-start">
             <CountPill
               n={report.issueCounts.critical}
-              label="Acil"
+              label={t.critical}
               cls="bg-error/10 text-error"
             />
             <CountPill
               n={report.issueCounts.warning}
-              label="Orta"
+              label={t.warning}
               cls="bg-warning/15 text-warning"
             />
             <CountPill
               n={report.issueCounts.info}
-              label="Küçük"
+              label={t.info}
               cls="bg-info/10 text-info"
             />
           </div>
@@ -132,7 +141,15 @@ function CountPill({
   );
 }
 
-function ProblemsSection({ report }: { report: HealthReport }) {
+function ProblemsSection({
+  report,
+  t,
+  lang,
+}: {
+  report: HealthReport;
+  t: ResultsCopy;
+  lang: "tr" | "en";
+}) {
   if (report.topProblems.length === 0) {
     return (
       <section
@@ -141,11 +158,10 @@ function ProblemsSection({ report }: { report: HealthReport }) {
       >
         <CheckCircle2 className="mt-0.5 size-6 shrink-0 text-success" />
         <div>
-          <h2 className="text-xl font-bold tracking-tight">Sorun bulunamadı</h2>
-          <p className="mt-1 text-base-content/70">
-            Taranan sayfalarda acil bir sorun çıkmadı. Aşağıdaki plan sitenizi
-            daha da güçlendirmenize yardımcı olur.
-          </p>
+          <h2 className="text-xl font-bold tracking-tight">
+            {t.noIssuesTitle}
+          </h2>
+          <p className="mt-1 text-base-content/70">{t.noIssuesBody}</p>
         </div>
       </section>
     );
@@ -156,9 +172,15 @@ function ProblemsSection({ report }: { report: HealthReport }) {
       className="hr-in flex flex-col gap-4"
       style={{ animationDelay: "120ms" }}
     >
-      <h2 className="text-2xl font-bold tracking-tight">Öncelikli 3 sorun</h2>
+      <h2 className="text-2xl font-bold tracking-tight">{t.topProblems}</h2>
       {report.topProblems.map((problem, index) => (
-        <ProblemCard key={problem.issueType} problem={problem} index={index} />
+        <ProblemCard
+          key={problem.issueType}
+          problem={problem}
+          index={index}
+          t={t}
+          lang={lang}
+        />
       ))}
     </section>
   );
@@ -167,11 +189,15 @@ function ProblemsSection({ report }: { report: HealthReport }) {
 function ProblemCard({
   problem,
   index,
+  t,
+  lang,
 }: {
   problem: HealthReport["topProblems"][number];
   index: number;
+  t: ResultsCopy;
+  lang: "tr" | "en";
 }) {
-  const tone = severityTone(problem.severity);
+  const tone = severityTone(problem.severity, lang);
   return (
     <article className="relative overflow-hidden rounded-2xl border border-base-300 bg-base-100 transition-transform hover:-translate-y-0.5">
       <span className={`absolute inset-y-0 left-0 w-1 ${tone.bar}`} />
@@ -192,11 +218,11 @@ function ProblemCard({
           </span>
         </div>
         <p className="text-sm text-base-content/45">
-          {problem.affectedPages} sayfada tespit edildi
+          {t.detectedOn(problem.affectedPages)}
         </p>
         <div className="grid gap-3 sm:grid-cols-2">
-          <Detail title="Ne anlama geliyor?" body={problem.whatItMeans} />
-          <Detail title="Nasıl düzeltilir?" body={problem.howToFix} />
+          <Detail title={t.whatItMeans} body={problem.whatItMeans} />
+          <Detail title={t.howToFix} body={problem.howToFix} />
         </div>
       </div>
     </article>
@@ -216,7 +242,13 @@ function Detail({ title, body }: { title: string; body: string }) {
 
 type PlanItem = HealthReport["actionPlan"][number];
 
-function ActionPlanSection({ report }: { report: HealthReport }) {
+function ActionPlanSection({
+  report,
+  t,
+}: {
+  report: HealthReport;
+  t: ResultsCopy;
+}) {
   const [done, setDone] = React.useState<Set<number>>(new Set());
   const toggle = (i: number) =>
     setDone((prev) => {
@@ -236,11 +268,9 @@ function ActionPlanSection({ report }: { report: HealthReport }) {
       style={{ animationDelay: "180ms" }}
     >
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <h2 className="text-2xl font-bold tracking-tight">
-          30 günlük eylem planı
-        </h2>
+        <h2 className="text-2xl font-bold tracking-tight">{t.planHeading}</h2>
         <span className="text-sm font-medium text-base-content/50">
-          {done.size}/{total} tamamlandı
+          {t.completed(done.size, total)}
         </span>
       </div>
 
@@ -264,6 +294,7 @@ function ActionPlanSection({ report }: { report: HealthReport }) {
               items={items}
               done={done}
               onToggle={toggle}
+              t={t}
             />
           );
         })}
@@ -277,11 +308,13 @@ function WeekBlock({
   items,
   done,
   onToggle,
+  t,
 }: {
   week: number;
   items: { item: PlanItem; index: number }[];
   done: Set<number>;
   onToggle: (i: number) => void;
+  t: ResultsCopy;
 }) {
   return (
     <div className="relative">
@@ -292,7 +325,7 @@ function WeekBlock({
         {week}
       </span>
       <h3 className="mb-2 text-sm font-semibold text-base-content/60">
-        {week}. hafta
+        {t.weekLabel(week)}
       </h3>
       <div className="flex flex-col divide-y divide-base-200 overflow-hidden rounded-2xl border border-base-300 bg-base-100">
         {items.map(({ item, index }) => {
@@ -325,26 +358,23 @@ function WeekBlock({
   );
 }
 
-function FooterCta() {
+function FooterCta({ t }: { t: ResultsCopy }) {
   return (
     <section
       className="hr-in flex flex-col items-start gap-4 rounded-2xl border border-base-300 bg-base-100 p-7 sm:flex-row sm:items-center sm:justify-between"
       style={{ animationDelay: "240ms" }}
     >
       <div>
-        <h3 className="text-lg font-bold tracking-tight">
-          Daha derin bir analiz mi istiyorsunuz?
-        </h3>
+        <h3 className="text-lg font-bold tracking-tight">{t.footerHeading}</h3>
         <p className="mt-1 max-w-md text-sm text-base-content/60">
-          mySeo ile rakip analizi, anahtar kelime araştırması, sıralama takibi
-          ve tam site denetimini tek yerde yapın.
+          {t.footerBody}
         </p>
       </div>
       <a
         href="/"
         className="hr-cta inline-flex shrink-0 items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold"
       >
-        mySeo'yu keşfet
+        {t.footerButton}
         <ArrowRight className="size-4" />
       </a>
     </section>

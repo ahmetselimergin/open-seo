@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getHealthReport } from "@/server/features/health-report/report-store";
 import { renderSharedReportHtml } from "@/server/features/health-report/sharedReportHtml";
+import { resolveLang } from "@/server/features/health-report/serverLang";
 
 // Server-rendered public share page. Returns real HTML (title + OpenGraph meta
 // + readable report) so links preview correctly on social/chat and are
@@ -15,7 +16,12 @@ async function handleSharedReport(
     return html(notFoundHtml(origin), 404);
   }
   return html(
-    renderSharedReportHtml({ report: stored.report, id, origin }),
+    renderSharedReportHtml({
+      report: stored.report,
+      id,
+      origin,
+      lang: resolveLang(request),
+    }),
     200,
     "public, max-age=300",
   );

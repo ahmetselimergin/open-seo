@@ -2,10 +2,15 @@ import * as React from "react";
 import { Gauge } from "@/client/features/health-report/Gauge";
 import { scoreTone } from "@/client/features/health-report/tones";
 import { Backdrop, PageStyles } from "@/client/features/health-report/visuals";
+import {
+  LanguageSwitcher,
+  LangProvider,
+  useLang,
+} from "@/client/features/health-report/i18n";
+import { toolsCopy } from "@/client/features/health-report/i18n-tools";
 
 interface Metric {
   id: string;
-  label: string;
   numericValue: number;
   displayValue: string;
 }
@@ -14,7 +19,6 @@ interface SpeedResult {
   score: number;
   metrics: Metric[];
 }
-
 type State =
   | { status: "idle" }
   | { status: "loading" }
@@ -29,7 +33,6 @@ const THRESHOLDS: Record<string, [number, number]> = {
   "first-contentful-paint": [1800, 3000],
   "speed-index": [3400, 5800],
 };
-
 function rating(id: string, v: number): "good" | "avg" | "poor" {
   const t = THRESHOLDS[id];
   if (!t) return "avg";
@@ -44,6 +47,16 @@ const RATING_CLS: Record<string, string> = {
 };
 
 export function PageSpeedToolPage() {
+  return (
+    <LangProvider>
+      <SpeedInner />
+    </LangProvider>
+  );
+}
+
+function SpeedInner() {
+  const t = toolsCopy(useLang().lang);
+  const c = t.speed;
   const [url, setUrl] = React.useState("");
   const [view, setView] = React.useState<State>({ status: "idle" });
 
@@ -61,13 +74,13 @@ export function PageSpeedToolPage() {
       if (!res.ok || "error" in data) {
         setView({
           status: "error",
-          message: "error" in data ? data.error : "Bir hata oluştu.",
+          message: "error" in data ? data.error : t.genericError,
         });
         return;
       }
       setView({ status: "done", result: data });
     } catch {
-      setView({ status: "error", message: "Bağlantı hatası, tekrar deneyin." });
+      setView({ status: "error", message: t.connError });
     }
   };
 
@@ -80,23 +93,22 @@ export function PageSpeedToolPage() {
           <a href="/" className="text-lg font-bold tracking-tight">
             my<span className="hr-accent">Seo</span>
           </a>
-          <a
-            href="/araclar"
-            className="text-sm text-base-content/60 hover:text-base-content"
-          >
-            Tüm araçlar
-          </a>
+          <div className="flex items-center gap-4 text-sm text-base-content/60">
+            <a href="/araclar" className="hover:text-base-content">
+              {t.allTools}
+            </a>
+            <LanguageSwitcher />
+          </div>
         </div>
       </header>
 
       <main className="mx-auto w-full max-w-3xl px-5 pb-28 pt-10">
         <div className="text-center">
           <h1 className="text-[clamp(2rem,5vw,3.25rem)] font-semibold leading-[1.05] tracking-[-0.02em]">
-            Sayfa hızı <span className="hr-accent">& Core Web Vitals</span>
+            {c.title} <span className="hr-accent">{c.accent}</span>
           </h1>
           <p className="mx-auto mt-4 max-w-lg text-base-content/60">
-            Google verileriyle sayfanızın mobil performans skorunu ve temel hız
-            metriklerini ölçün.
+            {c.subtitle}
           </p>
         </div>
 
@@ -104,7 +116,7 @@ export function PageSpeedToolPage() {
           <input
             type="text"
             inputMode="url"
-            placeholder="siteniz.com/sayfa"
+            placeholder={c.placeholder}
             className="hr-field w-full rounded-2xl border border-base-300 px-4 py-3.5 text-base outline-none transition-[border-color,box-shadow] placeholder:text-base-content/35"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
@@ -115,13 +127,13 @@ export function PageSpeedToolPage() {
             className="hr-cta inline-flex shrink-0 items-center gap-2 rounded-2xl px-5 py-3.5 font-semibold disabled:opacity-50"
             disabled={view.status === "loading"}
           >
-            {view.status === "loading" ? "Ölçülüyor…" : "Ölç"}
+            {view.status === "loading" ? c.measuring : c.measure}
           </button>
         </form>
 
         {view.status === "loading" && (
           <p className="mt-4 text-center text-sm text-base-content/50">
-            Google sayfayı analiz ediyor; bu 15–40 saniye sürebilir.
+            {c.loadingNote}
           </p>
         )}
         {view.status === "error" && (
@@ -137,18 +149,15 @@ export function PageSpeedToolPage() {
 }
 
 function Results({ result }: { result: SpeedResult }) {
+  const c = toolsCopy(useLang().lang).speed;
   const tone = scoreTone(result.score);
   return (
     <div className="mt-10 flex flex-col gap-6">
       <section className="hr-in hr-surface flex items-center gap-6 rounded-3xl p-7">
         <Gauge score={result.score} display={result.score} tone={tone} />
         <div>
-          <h2 className="text-xl font-bold tracking-tight">
-            Mobil performans skoru
-          </h2>
-          <p className="mt-1 text-base-content/60">
-            Google PageSpeed Insights (lab verisi) temel alınmıştır.
-          </p>
+          <h2 className="text-xl font-bold tracking-tight">{c.scoreHeading}</h2>
+          <p className="mt-1 text-base-content/60">{c.scoreNote}</p>
         </div>
       </section>
 
@@ -161,7 +170,9 @@ function Results({ result }: { result: SpeedResult }) {
             const r = rating(m.id, m.numericValue);
             return (
               <div key={m.id} className="hr-surface rounded-2xl p-5">
-                <p className="text-sm text-base-content/55">{m.label}</p>
+                <p className="text-sm text-base-content/55">
+                  {c.labels[m.id] ?? m.id}
+                </p>
                 <p className={`mt-1 text-2xl font-bold ${RATING_CLS[r]}`}>
                   {m.displayValue}
                 </p>

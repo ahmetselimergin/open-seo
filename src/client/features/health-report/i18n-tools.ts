@@ -65,6 +65,18 @@ export interface ToolsCopy {
     previewUrl: string;
     googlePreview: string;
   };
+  speed: {
+    title: string;
+    accent: string;
+    subtitle: string;
+    placeholder: string;
+    measure: string;
+    measuring: string;
+    loadingNote: string;
+    scoreHeading: string;
+    scoreNote: string;
+    labels: Record<string, string>;
+  };
 }
 
 const TR: ToolsCopy = {
@@ -140,6 +152,25 @@ const TR: ToolsCopy = {
     previewUrl: "siteniz.com › sayfa",
     googlePreview: "Google önizlemesi",
   },
+  speed: {
+    title: "Sayfa hızı",
+    accent: "& Core Web Vitals",
+    subtitle:
+      "Google verileriyle sayfanızın mobil performans skorunu ve temel hız metriklerini ölçün.",
+    placeholder: "siteniz.com/sayfa",
+    measure: "Ölç",
+    measuring: "Ölçülüyor…",
+    loadingNote: "Google sayfayı analiz ediyor; bu 15–40 saniye sürebilir.",
+    scoreHeading: "Mobil performans skoru",
+    scoreNote: "Google PageSpeed Insights (lab verisi) temel alınmıştır.",
+    labels: {
+      "largest-contentful-paint": "En büyük içerik (LCP)",
+      "cumulative-layout-shift": "Görsel kayma (CLS)",
+      "total-blocking-time": "Toplam engelleme (TBT)",
+      "first-contentful-paint": "İlk içerik (FCP)",
+      "speed-index": "Hız endeksi",
+    },
+  },
 };
 
 const EN: ToolsCopy = {
@@ -214,6 +245,25 @@ const EN: ToolsCopy = {
       "Your meta description appears here. Write a sentence that summarizes the page and boosts clicks in search.",
     previewUrl: "yoursite.com › page",
     googlePreview: "Google preview",
+  },
+  speed: {
+    title: "Page speed",
+    accent: "& Core Web Vitals",
+    subtitle:
+      "Measure your page's mobile performance score and core speed metrics with Google data.",
+    placeholder: "yoursite.com/page",
+    measure: "Measure",
+    measuring: "Measuring…",
+    loadingNote: "Google is analyzing the page; this can take 15–40 seconds.",
+    scoreHeading: "Mobile performance score",
+    scoreNote: "Based on Google PageSpeed Insights (lab data).",
+    labels: {
+      "largest-contentful-paint": "Largest Contentful Paint (LCP)",
+      "cumulative-layout-shift": "Cumulative Layout Shift (CLS)",
+      "total-blocking-time": "Total Blocking Time (TBT)",
+      "first-contentful-paint": "First Contentful Paint (FCP)",
+      "speed-index": "Speed Index",
+    },
   },
 };
 

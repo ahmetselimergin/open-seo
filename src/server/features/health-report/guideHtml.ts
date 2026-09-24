@@ -1,45 +1,108 @@
 import { AUDIT_ISSUE_TYPES, type IssueSeverity } from "@/shared/audit-issues";
 import { getIssueCopy } from "@/shared/health-report-copy";
+import type { ReportLang } from "@/shared/health-report";
 
 // Server-rendered, indexable SEO guide built from the same issue registry the
-// scanner uses. Real content (title + plain-Turkish explanation + fix) for
-// organic search, each section funnelling into a free scan.
+// scanner uses. Real content (title + plain explanation + fix) for organic
+// search, each section funnelling into a free scan.
 
-const SEVERITY_LABEL: Record<IssueSeverity, string> = {
-  critical: "Acil sorunlar",
-  warning: "Orta öncelikli sorunlar",
-  info: "Küçük iyileştirmeler",
+interface GuideCopy {
+  htmlLang: string;
+  severity: Record<IssueSeverity, string>;
+  howToFix: string;
+  title: string;
+  desc: string;
+  heading: string;
+  freeScan: string;
+  ctaHeading: string;
+  ctaBody: string;
+  ctaButton: string;
+  home: string;
+  compare: string;
+  privacy: string;
+  terms: string;
+}
+
+const GUIDE_COPY: Record<ReportLang, GuideCopy> = {
+  tr: {
+    htmlLang: "tr",
+    severity: {
+      critical: "Acil sorunlar",
+      warning: "Orta öncelikli sorunlar",
+      info: "Küçük iyileştirmeler",
+    },
+    howToFix: "Nasıl düzeltilir?",
+    title: "SEO Sağlık Rehberi — sık karşılaşılan sorunlar ve çözümleri",
+    desc: "Sitenizin arama motoru performansını etkileyen yaygın SEO sorunları, ne anlama geldikleri ve nasıl düzeltilecekleri — sade Türkçe ile.",
+    heading: "SEO Sağlık Rehberi",
+    freeScan: "Ücretsiz tara",
+    ctaHeading: "Siteniz bu sorunların hangisinden etkileniyor?",
+    ctaBody: "Alan adınızı girin, saniyeler içinde ücretsiz öğrenin.",
+    ctaButton: "Sitemi tara",
+    home: "Ana sayfa",
+    compare: "Karşılaştır",
+    privacy: "Gizlilik",
+    terms: "Kullanım Koşulları",
+  },
+  en: {
+    htmlLang: "en",
+    severity: {
+      critical: "Urgent issues",
+      warning: "Moderate-priority issues",
+      info: "Minor improvements",
+    },
+    howToFix: "How to fix it?",
+    title: "SEO Health Guide — common issues and how to fix them",
+    desc: "The common SEO issues that affect your site's search performance, what they mean and how to fix them — in plain language.",
+    heading: "SEO Health Guide",
+    freeScan: "Free scan",
+    ctaHeading: "Which of these issues affects your site?",
+    ctaBody: "Enter your domain and find out for free in seconds.",
+    ctaButton: "Scan my site",
+    home: "Home",
+    compare: "Compare",
+    privacy: "Privacy",
+    terms: "Terms",
+  },
 };
+
 const SEVERITY_ORDER: IssueSeverity[] = ["critical", "warning", "info"];
 
-function itemsFor(severity: IssueSeverity): string {
+function itemsFor(
+  severity: IssueSeverity,
+  lang: ReportLang,
+  t: GuideCopy,
+): string {
   return Object.entries(AUDIT_ISSUE_TYPES)
     .filter(([, descriptor]) => descriptor.severity === severity)
     .map(([issueType]) => {
-      const copy = getIssueCopy(issueType);
+      const copy = getIssueCopy(issueType, lang);
       if (!copy) return "";
       return `<article class="g">
         <h3>${copy.title}</h3>
         <p>${copy.whatItMeans}</p>
-        <p class="fix"><span>Nasıl düzeltilir?</span> ${copy.howToFix}</p>
+        <p class="fix"><span>${t.howToFix}</span> ${copy.howToFix}</p>
       </article>`;
     })
     .join("");
 }
 
-export function renderGuideHtml(origin: string): string {
+export function renderGuideHtml(
+  origin: string,
+  lang: ReportLang = "tr",
+): string {
   const accent = "#35c6f4";
+  const t = GUIDE_COPY[lang];
   const sections = SEVERITY_ORDER.map(
     (sev) =>
-      `<section><h2 class="sev sev-${sev}">${SEVERITY_LABEL[sev]}</h2>${itemsFor(sev)}</section>`,
+      `<section><h2 class="sev sev-${sev}">${t.severity[sev]}</h2>${itemsFor(sev, lang, t)}</section>`,
   ).join("");
 
-  const title = "SEO Sağlık Rehberi — sık karşılaşılan sorunlar ve çözümleri";
-  const desc =
-    "Sitenizin arama motoru performansını etkileyen yaygın SEO sorunları, ne anlama geldikleri ve nasıl düzeltilecekleri — sade Türkçe ile.";
+  const title = t.title;
+  const desc = t.desc;
 
   return `<!doctype html>
-<html lang="tr">
+<html lang="${t.htmlLang}">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -80,25 +143,25 @@ export function renderGuideHtml(origin: string): string {
   <div class="wrap">
     <header>
       <a class="brand" href="${origin}/">my<span>Seo</span></a>
-      <a class="btn" href="${origin}/">Ücretsiz tara</a>
+      <a class="btn" href="${origin}/">${t.freeScan}</a>
     </header>
 
-    <h1>SEO Sağlık Rehberi</h1>
+    <h1>${t.heading}</h1>
     <p class="lead">${desc}</p>
 
     ${sections}
 
     <div class="cta">
-      <h2>Siteniz bu sorunların hangisinden etkileniyor?</h2>
-      <p>Alan adınızı girin, saniyeler içinde ücretsiz öğrenin.</p>
-      <a class="btn" href="${origin}/">Sitemi tara</a>
+      <h2>${t.ctaHeading}</h2>
+      <p>${t.ctaBody}</p>
+      <a class="btn" href="${origin}/">${t.ctaButton}</a>
     </div>
 
     <footer>
-      <a href="${origin}/">Ana sayfa</a>
-      <a href="${origin}/karsilastir">Karşılaştır</a>
-      <a href="${origin}/gizlilik">Gizlilik</a>
-      <a href="${origin}/kullanim-kosullari">Kullanım Koşulları</a>
+      <a href="${origin}/">${t.home}</a>
+      <a href="${origin}/karsilastir">${t.compare}</a>
+      <a href="${origin}/gizlilik">${t.privacy}</a>
+      <a href="${origin}/kullanim-kosullari">${t.terms}</a>
     </footer>
   </div>
 </body>

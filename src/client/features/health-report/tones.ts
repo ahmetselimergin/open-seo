@@ -1,5 +1,5 @@
 import * as React from "react";
-import type { IssueSeverity } from "@/shared/health-report";
+import type { IssueSeverity, ReportLang } from "@/shared/health-report";
 
 /** Count a number up from 0 with an easeOutCubic curve on mount. */
 export function useCountUp(target: number, durationMs = 900): number {
@@ -55,11 +55,20 @@ export interface SeverityTone {
   badge: string;
 }
 
+const SEVERITY_LABELS: Record<ReportLang, Record<IssueSeverity, string>> = {
+  tr: { critical: "Acil", warning: "Orta", info: "Küçük" },
+  en: { critical: "Urgent", warning: "Moderate", info: "Minor" },
+};
+
 /** Accent colors for a problem card, keyed to issue severity. */
-export function severityTone(severity: IssueSeverity): SeverityTone {
+export function severityTone(
+  severity: IssueSeverity,
+  lang: ReportLang = "tr",
+): SeverityTone {
+  const label = SEVERITY_LABELS[lang][severity];
   if (severity === "critical") {
     return {
-      label: "Acil",
+      label,
       bar: "bg-error",
       chip: "bg-error/15 text-error",
       badge: "bg-error/10 text-error",
@@ -67,14 +76,14 @@ export function severityTone(severity: IssueSeverity): SeverityTone {
   }
   if (severity === "warning") {
     return {
-      label: "Orta",
+      label,
       bar: "bg-warning",
       chip: "bg-warning/20 text-warning",
       badge: "bg-warning/15 text-warning",
     };
   }
   return {
-    label: "Küçük",
+    label,
     bar: "bg-info",
     chip: "bg-info/15 text-info",
     badge: "bg-info/10 text-info",

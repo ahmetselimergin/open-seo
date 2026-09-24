@@ -1,6 +1,15 @@
 import * as React from "react";
 import { Swords } from "lucide-react";
-import type { HealthReport } from "@/shared/health-report";
+import { localizeReport, type HealthReport } from "@/shared/health-report";
+import {
+  LanguageSwitcher,
+  LangProvider,
+  useLang,
+} from "@/client/features/health-report/i18n";
+import {
+  compareCopy,
+  type CompareCopy,
+} from "@/client/features/health-report/i18n-results";
 import { scoreTone } from "@/client/features/health-report/tones";
 import { Gauge } from "@/client/features/health-report/Gauge";
 import {
@@ -16,6 +25,16 @@ type State =
   | { status: "done"; a: HealthReport; b: HealthReport };
 
 export function ComparePage() {
+  return (
+    <LangProvider>
+      <CompareInner />
+    </LangProvider>
+  );
+}
+
+function CompareInner() {
+  const { lang } = useLang();
+  const c = compareCopy(lang);
   const [you, setYou] = React.useState("");
   const [rival, setRival] = React.useState("");
   const [view, setView] = React.useState<State>({ status: "idle" });
@@ -38,14 +57,13 @@ export function ComparePage() {
       if (!res.ok || "error" in data) {
         setView({
           status: "error",
-          message:
-            "error" in data ? data.error : "Beklenmeyen bir hata oluştu.",
+          message: "error" in data ? data.error : c.genericError,
         });
         return;
       }
       setView({ status: "done", a: data.a, b: data.b });
     } catch {
-      setView({ status: "error", message: "Bağlantı hatası, tekrar deneyin." });
+      setView({ status: "error", message: c.connError });
     }
   };
 
@@ -59,22 +77,22 @@ export function ComparePage() {
           <a href="/" className="text-lg font-bold tracking-tight">
             my<span className="hr-accent">Seo</span>
           </a>
-          <a
-            href="/"
-            className="text-sm text-base-content/60 hover:text-base-content"
-          >
-            Tek site tara
-          </a>
+          <div className="flex items-center gap-4 text-sm text-base-content/60">
+            <a href="/" className="hover:text-base-content">
+              {c.singleScan}
+            </a>
+            <LanguageSwitcher />
+          </div>
         </div>
       </header>
 
       <main className="mx-auto w-full max-w-4xl px-5 pb-28 pt-10">
         <div className="text-center">
           <h1 className="text-[clamp(2rem,5vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.02em]">
-            İki siteyi <span className="hr-accent">karşılaştır</span>
+            {c.title} <span className="hr-accent">{c.titleAccent}</span>
           </h1>
           <p className="mx-auto mt-4 max-w-lg text-base-content/60">
-            Seninki ile rakibini yan yana koy; kim önde, nerede geride gör.
+            {c.subtitle}
           </p>
         </div>
 
@@ -83,11 +101,11 @@ export function ComparePage() {
           className="mx-auto mt-8 flex max-w-2xl flex-col gap-3 sm:flex-row sm:items-end"
         >
           <label className="flex-1">
-            <span className="mb-1 block text-sm font-medium">Senin siten</span>
+            <span className="mb-1 block text-sm font-medium">{c.yourSite}</span>
             <input
               type="text"
               inputMode="url"
-              placeholder="siteniz.com"
+              placeholder={c.yourPlaceholder}
               className="hr-field w-full rounded-2xl border border-base-300 px-4 py-3 outline-none transition-[border-color,box-shadow] placeholder:text-base-content/35"
               value={you}
               onChange={(e) => setYou(e.target.value)}
@@ -95,11 +113,13 @@ export function ComparePage() {
             />
           </label>
           <label className="flex-1">
-            <span className="mb-1 block text-sm font-medium">Rakip</span>
+            <span className="mb-1 block text-sm font-medium">
+              {c.competitor}
+            </span>
             <input
               type="text"
               inputMode="url"
-              placeholder="rakip.com"
+              placeholder={c.rivalPlaceholder}
               className="hr-field w-full rounded-2xl border border-base-300 px-4 py-3 outline-none transition-[border-color,box-shadow] placeholder:text-base-content/35"
               value={rival}
               onChange={(e) => setRival(e.target.value)}
@@ -112,10 +132,10 @@ export function ComparePage() {
             disabled={view.status === "loading"}
           >
             {view.status === "loading" ? (
-              "Taranıyor…"
+              c.scanning
             ) : (
               <>
-                <Swords className="size-4" /> Karşılaştır
+                <Swords className="size-4" /> {c.compareBtn}
               </>
             )}
           </button>
@@ -135,33 +155,53 @@ export function ComparePage() {
         )}
 
         {view.status === "done" && (
-          <div className="mt-10">
-            <Verdict a={view.a} b={view.b} />
-            <div className="mt-6 grid gap-5 sm:grid-cols-2">
-              <CompareColumn
-                report={view.a}
-                win={view.a.score >= view.b.score}
-              />
-              <CompareColumn
-                report={view.b}
-                win={view.b.score > view.a.score}
-              />
-            </div>
-          </div>
+          <ResultView a={view.a} b={view.b} c={c} lang={lang} />
         )}
       </main>
     </div>
   );
 }
 
-function Verdict({ a, b }: { a: HealthReport; b: HealthReport }) {
+function ResultView({
+  a,
+  b,
+  c,
+  lang,
+}: {
+  a: HealthReport;
+  b: HealthReport;
+  c: CompareCopy;
+  lang: "tr" | "en";
+}) {
+  const la = localizeReport(a, lang);
+  const lb = localizeReport(b, lang);
+  return (
+    <div className="mt-10">
+      <Verdict a={la} b={lb} c={c} />
+      <div className="mt-6 grid gap-5 sm:grid-cols-2">
+        <CompareColumn report={la} win={la.score >= lb.score} c={c} />
+        <CompareColumn report={lb} win={lb.score > la.score} c={c} />
+      </div>
+    </div>
+  );
+}
+
+function Verdict({
+  a,
+  b,
+  c,
+}: {
+  a: HealthReport;
+  b: HealthReport;
+  c: CompareCopy;
+}) {
   const diff = a.score - b.score;
   const text =
     diff > 0
-      ? `Öndesin! ${a.domain}, ${b.domain} sitesinden ${diff} puan yüksek.`
+      ? c.ahead(a.domain, b.domain, diff)
       : diff < 0
-        ? `Rakip önde: ${b.domain}, seninkinden ${-diff} puan yüksek.`
-        : "Başa baş! İki site de aynı skorda.";
+        ? c.behind(b.domain, -diff)
+        : c.tie;
   return (
     <div className="hr-surface rounded-2xl p-5 text-center text-lg font-semibold">
       {text}
@@ -172,9 +212,11 @@ function Verdict({ a, b }: { a: HealthReport; b: HealthReport }) {
 function CompareColumn({
   report,
   win,
+  c,
 }: {
   report: HealthReport;
   win: boolean;
+  c: CompareCopy;
 }) {
   const tone = scoreTone(report.score);
   return (
@@ -187,7 +229,7 @@ function CompareColumn({
         </span>
         {win && (
           <span className="hr-accent shrink-0 rounded-full bg-secondary/15 px-2.5 py-0.5 text-xs font-semibold">
-            Önde
+            {c.winBadge}
           </span>
         )}
       </div>
@@ -195,14 +237,14 @@ function CompareColumn({
         <Gauge score={report.score} display={report.score} tone={tone} />
       </div>
       <p className="mt-3 text-center text-sm text-base-content/45">
-        {report.pagesScanned} sayfa · {report.grade}
+        {c.pagesGrade(report.pagesScanned, report.grade)}
       </p>
       <div className="mt-4 flex flex-wrap justify-center gap-2">
         <span className="rounded-full bg-error/10 px-3 py-1 text-sm font-medium text-error">
-          {report.issueCounts.critical} Acil
+          {report.issueCounts.critical} {c.critical}
         </span>
         <span className="rounded-full bg-warning/15 px-3 py-1 text-sm font-medium text-warning">
-          {report.issueCounts.warning} Orta
+          {report.issueCounts.warning} {c.warning}
         </span>
       </div>
       {report.topProblems.length > 0 && (

@@ -6,20 +6,23 @@ import {
   guardPublicPost,
   jsonResponse as json,
 } from "@/server/features/health-report/abuse";
+import { resolveLang } from "@/server/features/health-report/serverLang";
 
 // Free page-speed / Core Web Vitals tool. Delegates the fetch+analysis to
 // Google PageSpeed Insights (Google fetches the target, not our worker), so it
 // adds the performance dimension our crawl-only scan lacks. Optional
 // PAGESPEED_API_KEY raises quota; the endpoint degrades gracefully without it.
+// Metric labels are localized on the client (by id); PSI's own displayValue is
+// localized via the `locale` param.
 const schema = z.object({ url: z.string().min(1).max(2048) });
 
-const METRIC_LABELS: Record<string, string> = {
-  "largest-contentful-paint": "En büyük içerik (LCP)",
-  "cumulative-layout-shift": "Görsel kayma (CLS)",
-  "total-blocking-time": "Toplam engelleme (TBT)",
-  "first-contentful-paint": "İlk içerik (FCP)",
-  "speed-index": "Hız endeksi",
-};
+const METRIC_IDS = [
+  "largest-contentful-paint",
+  "cumulative-layout-shift",
+  "total-blocking-time",
+  "first-contentful-paint",
+  "speed-index",
+];
 
 const psiSchema = z
   .object({
@@ -79,6 +82,7 @@ async function handlePageSpeed(request: Request): Promise<Response> {
   endpoint.searchParams.set("url", target);
   endpoint.searchParams.set("strategy", "mobile");
   endpoint.searchParams.set("category", "performance");
+  endpoint.searchParams.set("locale", resolveLang(request));
   const key = apiKey();
   if (key) endpoint.searchParams.set("key", key);
 
@@ -104,18 +108,15 @@ async function handlePageSpeed(request: Request): Promise<Response> {
   }
 
   const audits = lh?.audits ?? {};
-  const metrics = Object.keys(METRIC_LABELS)
-    .map((id) => {
-      const a = audits[id];
-      if (!a || typeof a.numericValue !== "number") return null;
-      return {
-        id,
-        label: METRIC_LABELS[id],
-        numericValue: a.numericValue,
-        displayValue: a.displayValue ?? String(a.numericValue),
-      };
-    })
-    .filter((m): m is NonNullable<typeof m> => m !== null);
+  const metrics = METRIC_IDS.map((id) => {
+    const a = audits[id];
+    if (!a || typeof a.numericValue !== "number") return null;
+    return {
+      id,
+      numericValue: a.numericValue,
+      displayValue: a.displayValue ?? String(a.numericValue),
+    };
+  }).filter((m): m is NonNullable<typeof m> => m !== null);
 
   return json({ url: target, score: Math.round(scoreRaw * 100), metrics }, 200);
 }

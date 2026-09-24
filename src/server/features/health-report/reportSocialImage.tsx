@@ -1,5 +1,9 @@
 import { ImageResponse } from "takumi-js/response";
-import type { HealthReport } from "@/shared/health-report";
+import {
+  localizeReport,
+  type HealthReport,
+  type ReportLang,
+} from "@/shared/health-report";
 
 // Dynamic 1200x630 social card for a shared SEO health report. Rendered
 // server-side (takumi) so shared links preview well on social/chat. Cinematic
@@ -10,8 +14,27 @@ function toneColor(score: number): string {
   return "#ef4444";
 }
 
-export function renderHealthReportSocialImage(report: HealthReport): Response {
+const OG_COPY: Record<
+  ReportLang,
+  { kicker: string; opportunities: (n: number) => string }
+> = {
+  tr: {
+    kicker: "SEO SAĞLIK RAPORU",
+    opportunities: (n) => `${n} iyileştirme fırsatı bulundu`,
+  },
+  en: {
+    kicker: "SEO HEALTH REPORT",
+    opportunities: (n) => `${n} improvement opportunities found`,
+  },
+};
+
+export function renderHealthReportSocialImage(
+  input: HealthReport,
+  lang: ReportLang = "tr",
+): Response {
   const accent = "#35c6f4";
+  const report = localizeReport(input, lang);
+  const t = OG_COPY[lang];
   const ring = toneColor(report.score);
 
   return new ImageResponse(
@@ -53,7 +76,7 @@ export function renderHealthReportSocialImage(report: HealthReport): Response {
             letterSpacing: 2,
           }}
         >
-          SEO SAĞLIK RAPORU
+          {t.kicker}
         </div>
       </div>
 
@@ -105,7 +128,7 @@ export function renderHealthReportSocialImage(report: HealthReport): Response {
               paddingTop: 16,
             }}
           >
-            {report.issueCounts.total} iyileştirme fırsatı bulundu
+            {t.opportunities(report.issueCounts.total)}
           </div>
         </div>
       </div>
