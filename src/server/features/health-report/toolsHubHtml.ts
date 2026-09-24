@@ -1,64 +1,132 @@
-// Server-rendered, indexable "free tools" hub. A real landing page for the
-// "ücretsiz SEO araçları" intent, cross-linking every tool and funnelling into
-// a scan. Includes ItemList structured data for rich results.
+import type { ServerLang } from "@/server/features/health-report/serverLang";
 
+// Server-rendered, indexable, bilingual free-tools hub. A landing page for the
+// "free SEO tools" intent, cross-linking every tool, with ItemList structured
+// data and a no-JS language toggle.
 interface Tool {
   href: string;
   name: string;
   desc: string;
 }
+interface HubCopy {
+  title: string;
+  desc: string;
+  heading: string;
+  cta: string;
+  tools: Tool[];
+}
 
-const TOOLS: Tool[] = [
-  {
-    href: "/",
-    name: "SEO Sağlık Raporu",
-    desc: "Alan adınızı girin; 50 sayfaya kadar tarayıp skor, öncelikli sorunlar ve 30 günlük plan çıkaralım.",
+const COPY: Record<ServerLang, HubCopy> = {
+  tr: {
+    title: "Ücretsiz SEO Araçları — mySeo",
+    desc: "Sitenizi ücretsiz analiz edin: SEO sağlık raporu, rakip karşılaştırma, meta etiket kontrolü ve daha fazlası. Kayıt gerekmez.",
+    heading: "Ücretsiz SEO araçları",
+    cta: "Ücretsiz tara →",
+    tools: [
+      {
+        href: "/",
+        name: "SEO Sağlık Raporu",
+        desc: "Alan adınızı girin; 50 sayfaya kadar tarayıp skor, öncelikli sorunlar ve 30 günlük plan çıkaralım.",
+      },
+      {
+        href: "/karsilastir",
+        name: "Rakip Karşılaştırma",
+        desc: "Sitenizi bir rakiple yan yana koyun; skorları ve sorunları karşılaştırın.",
+      },
+      {
+        href: "/araclar/meta",
+        name: "Meta Etiket Kontrolü",
+        desc: "Bir sayfanın başlık, açıklama ve OG etiketlerini kontrol edin; Google ve sosyal medya önizlemesini görün.",
+      },
+      {
+        href: "/araclar/robots",
+        name: "robots.txt & Sitemap Kontrolü",
+        desc: "Siteniz arama motorlarına açık mı, site haritanız var mı — saniyeler içinde kontrol edin.",
+      },
+      {
+        href: "/araclar/hiz",
+        name: "Sayfa Hızı & Core Web Vitals",
+        desc: "Google verileriyle mobil performans skorunuzu ve temel hız metriklerinizi ölçün.",
+      },
+      {
+        href: "/araclar/snippet",
+        name: "SERP Snippet Yazarı",
+        desc: "Başlık ve açıklamanızı yazarken Google önizlemesini ve ideal uzunluğu anında görün.",
+      },
+      {
+        href: "/rehber",
+        name: "SEO Sağlık Rehberi",
+        desc: "Yaygın SEO sorunlarının ne anlama geldiğini ve nasıl düzeltileceğini sade Türkçe ile öğrenin.",
+      },
+    ],
   },
-  {
-    href: "/karsilastir",
-    name: "Rakip Karşılaştırma",
-    desc: "Sitenizi bir rakiple yan yana koyun; skorları ve sorunları karşılaştırın.",
+  en: {
+    title: "Free SEO Tools — mySeo",
+    desc: "Analyze your site for free: SEO health report, competitor comparison, meta tag checker and more. No sign-up.",
+    heading: "Free SEO tools",
+    cta: "Scan for free →",
+    tools: [
+      {
+        href: "/",
+        name: "SEO Health Report",
+        desc: "Enter your domain; we scan up to 50 pages for a score, priority issues and a 30-day plan.",
+      },
+      {
+        href: "/karsilastir",
+        name: "Competitor Comparison",
+        desc: "Put your site next to a competitor and compare scores and issues.",
+      },
+      {
+        href: "/araclar/meta",
+        name: "Meta Tag Checker",
+        desc: "Check a page's title, description and OG tags; preview how it looks on Google and social.",
+      },
+      {
+        href: "/araclar/robots",
+        name: "robots.txt & Sitemap Check",
+        desc: "Is your site open to search engines, do you have a sitemap — check in seconds.",
+      },
+      {
+        href: "/araclar/hiz",
+        name: "Page Speed & Core Web Vitals",
+        desc: "Measure your mobile performance score and core speed metrics with Google data.",
+      },
+      {
+        href: "/araclar/snippet",
+        name: "SERP Snippet Writer",
+        desc: "See a live Google preview and ideal length while you write your title and description.",
+      },
+      {
+        href: "/rehber",
+        name: "SEO Health Guide",
+        desc: "Learn what common SEO issues mean and how to fix them, in plain language.",
+      },
+    ],
   },
-  {
-    href: "/araclar/meta",
-    name: "Meta Etiket Kontrolü",
-    desc: "Bir sayfanın başlık, açıklama ve OG etiketlerini kontrol edin; Google ve sosyal medya önizlemesini görün.",
-  },
-  {
-    href: "/araclar/robots",
-    name: "robots.txt & Sitemap Kontrolü",
-    desc: "Siteniz arama motorlarına açık mı, site haritanız var mı — saniyeler içinde kontrol edin.",
-  },
-  {
-    href: "/araclar/hiz",
-    name: "Sayfa Hızı & Core Web Vitals",
-    desc: "Google verileriyle mobil performans skorunuzu ve temel hız metriklerinizi ölçün.",
-  },
-  {
-    href: "/rehber",
-    name: "SEO Sağlık Rehberi",
-    desc: "Yaygın SEO sorunlarının ne anlama geldiğini ve nasıl düzeltileceğini sade Türkçe ile öğrenin.",
-  },
-];
+};
 
-export function renderToolsHubHtml(origin: string): string {
+function langToggle(origin: string, lang: ServerLang): string {
+  const mk = (l: ServerLang, label: string) =>
+    l === lang
+      ? `<span class="on">${label}</span>`
+      : `<a href="${origin}/araclar?lang=${l}">${label}</a>`;
+  return `<span class="lang">${mk("tr", "TR")} ${mk("en", "EN")}</span>`;
+}
+
+export function renderToolsHubHtml(origin: string, lang: ServerLang): string {
+  const c = COPY[lang];
   const accent = "#35c6f4";
-  const title = "Ücretsiz SEO Araçları — mySeo";
-  const desc =
-    "Sitenizi ücretsiz analiz edin: SEO sağlık raporu, rakip karşılaştırma, meta etiket kontrolü ve daha fazlası. Kayıt gerekmez.";
-
-  const cards = TOOLS.map(
-    (t) => `<a class="card" href="${origin}${t.href}">
-      <h2>${t.name}</h2>
-      <p>${t.desc}</p>
-      <span class="go">Aç →</span>
+  const cards = c.tools
+    .map(
+      (t) => `<a class="card" href="${origin}${t.href}">
+      <h2>${t.name}</h2><p>${t.desc}</p><span class="go">${lang === "en" ? "Open →" : "Aç →"}</span>
     </a>`,
-  ).join("");
-
+    )
+    .join("");
   const jsonLd = JSON.stringify({
     "@context": "https://schema.org",
     "@type": "ItemList",
-    itemListElement: TOOLS.map((t, i) => ({
+    itemListElement: c.tools.map((t, i) => ({
       "@type": "ListItem",
       position: i + 1,
       name: t.name,
@@ -67,19 +135,17 @@ export function renderToolsHubHtml(origin: string): string {
   });
 
   return `<!doctype html>
-<html lang="tr">
-<head>
+<html lang="${lang}"><head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>${title}</title>
-<meta name="description" content="${desc}"/>
+<title>${c.title}</title>
+<meta name="description" content="${c.desc}"/>
 <link rel="canonical" href="${origin}/araclar"/>
 <meta property="og:type" content="website"/>
 <meta property="og:site_name" content="mySeo"/>
-<meta property="og:title" content="${title}"/>
-<meta property="og:description" content="${desc}"/>
+<meta property="og:title" content="${c.title}"/>
+<meta property="og:description" content="${c.desc}"/>
 <meta property="og:url" content="${origin}/araclar"/>
-<meta name="twitter:card" content="summary"/>
 <script type="application/ld+json">${jsonLd}</script>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
@@ -89,6 +155,9 @@ export function renderToolsHubHtml(origin: string): string {
   header{display:flex;align-items:center;justify-content:space-between;height:56px}
   .brand{font-weight:800;font-size:18px;letter-spacing:-.02em}
   .brand span{color:${accent}}
+  .lang{font-size:.85rem;color:#8b95a3}
+  .lang .on{color:#eef2f8;font-weight:700}
+  .lang a:hover{color:#eef2f8}
   h1{font-size:clamp(2rem,5vw,3rem);letter-spacing:-.02em;line-height:1.1;margin-top:24px}
   .lead{color:#c3cbd6;margin-top:14px;font-size:1.1rem;max-width:56ch}
   .grid{margin-top:32px;display:grid;gap:16px;grid-template-columns:1fr 1fr}
@@ -98,25 +167,15 @@ export function renderToolsHubHtml(origin: string): string {
   .card h2{font-size:1.2rem;letter-spacing:-.01em}
   .card p{color:#c3cbd6;margin-top:8px;font-size:.97rem}
   .card .go{display:inline-block;margin-top:14px;color:${accent};font-weight:600;font-size:.95rem}
-  footer{margin-top:40px;border-top:1px solid #232a36;padding-top:20px;color:#8b95a3;font-size:.9rem;display:flex;gap:16px;flex-wrap:wrap}
-</style>
-</head>
-<body>
-  <div class="wrap">
-    <header>
-      <a class="brand" href="${origin}/">my<span>Seo</span></a>
-      <a class="brand" style="color:${accent};font-size:15px" href="${origin}/">Ücretsiz tara →</a>
-    </header>
-    <h1>Ücretsiz SEO araçları</h1>
-    <p class="lead">${desc}</p>
-    <div class="grid">${cards}</div>
-    <footer>
-      <a href="${origin}/">Ana sayfa</a>
-      <a href="${origin}/rehber">Rehber</a>
-      <a href="${origin}/gizlilik">Gizlilik</a>
-      <a href="${origin}/kullanim-kosullari">Kullanım Koşulları</a>
-    </footer>
-  </div>
-</body>
-</html>`;
+  footer{margin-top:40px;border-top:1px solid #232a36;padding-top:20px;color:#8b95a3;font-size:.9rem}
+</style></head>
+<body><div class="wrap">
+<header>
+  <a class="brand" href="${origin}/">my<span>Seo</span></a>
+  <span style="display:flex;gap:16px;align-items:center">${langToggle(origin, lang)}<a style="color:${accent};font-size:15px;font-weight:600" href="${origin}/">${c.cta}</a></span>
+</header>
+<h1>${c.heading}</h1>
+<p class="lead">${c.desc}</p>
+<div class="grid">${cards}</div>
+</div></body></html>`;
 }

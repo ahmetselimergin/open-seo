@@ -4,6 +4,12 @@ import { Hero } from "@/client/features/health-report/HeroForm";
 import { LandingSections } from "@/client/features/health-report/LandingSections";
 import { Results } from "@/client/features/health-report/Results";
 import { Backdrop, PageStyles } from "@/client/features/health-report/visuals";
+import {
+  homeCopy,
+  LanguageSwitcher,
+  LangProvider,
+  useLang,
+} from "@/client/features/health-report/i18n";
 
 type ViewState =
   | { status: "idle" }
@@ -13,6 +19,16 @@ type ViewState =
 
 /** The public mySeo homepage: landing + single-click SEO health report. */
 export function HomePage() {
+  return (
+    <LangProvider>
+      <HomePageInner />
+    </LangProvider>
+  );
+}
+
+function HomePageInner() {
+  const { lang } = useLang();
+  const nav = homeCopy(lang).nav;
   const [domain, setDomain] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [view, setView] = React.useState<ViewState>({ status: "idle" });
@@ -58,25 +74,26 @@ export function HomePage() {
           <span className="text-lg font-bold tracking-tight">
             my<span className="hr-accent">Seo</span>
           </span>
-          <nav className="flex gap-5 text-sm text-base-content/60">
+          <nav className="flex items-center gap-5 text-sm text-base-content/60">
             <a
               href="/araclar"
               className="transition-colors hover:text-base-content"
             >
-              Araçlar
+              {nav.tools}
             </a>
             <a
-              href="/karsilastir"
+              href="/fiyatlandirma"
               className="transition-colors hover:text-base-content"
             >
-              Karşılaştır
+              {nav.pricing}
             </a>
             <a
               href="/hesap"
               className="transition-colors hover:text-base-content"
             >
-              Hesabım
+              {nav.account}
             </a>
+            <LanguageSwitcher />
           </nav>
         </div>
       </header>

@@ -20,6 +20,7 @@ import { Route as HesapRouteImport } from './routes/hesap'
 import { Route as HealthReportRouteImport } from './routes/health-report'
 import { Route as GizlilikRouteImport } from './routes/gizlilik'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as FiyatlandirmaRouteImport } from './routes/fiyatlandirma'
 import { Route as AuthErrorRouteImport } from './routes/auth-error'
 import { Route as AraclarRouteImport } from './routes/araclar'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
@@ -30,6 +31,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ReportIdRouteImport } from './routes/report.$id'
 import { Route as RReportIdRouteImport } from './routes/r/$reportId'
 import { Route as IzlemeTokenRouteImport } from './routes/izleme.$token'
+import { Route as AraclarSnippetRouteImport } from './routes/araclar.snippet'
 import { Route as AraclarRobotsRouteImport } from './routes/araclar.robots'
 import { Route as AraclarMetaRouteImport } from './routes/araclar.meta'
 import { Route as AraclarHizRouteImport } from './routes/araclar.hiz'
@@ -63,6 +65,7 @@ import { Route as ApiHealthReportCompareRouteImport } from './routes/api/health-
 import { Route as ApiHealthReportIdRouteImport } from './routes/api/health-report.$id'
 import { Route as ApiAutumnSplatRouteImport } from './routes/api/autumn/$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiAccountProInterestRouteImport } from './routes/api/account.pro-interest'
 import { Route as ApiAccountLogoutRouteImport } from './routes/api/account.logout'
 import { Route as ApiAccountLoginRouteImport } from './routes/api/account.login'
 import { Route as AppSettingsOrganizationRouteImport } from './routes/_app/settings/organization'
@@ -152,6 +155,11 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FiyatlandirmaRoute = FiyatlandirmaRouteImport.update({
+  id: '/fiyatlandirma',
+  path: '/fiyatlandirma',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthErrorRoute = AuthErrorRouteImport.update({
   id: '/auth-error',
   path: '/auth-error',
@@ -197,6 +205,11 @@ const IzlemeTokenRoute = IzlemeTokenRouteImport.update({
   id: '/izleme/$token',
   path: '/izleme/$token',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AraclarSnippetRoute = AraclarSnippetRouteImport.update({
+  id: '/snippet',
+  path: '/snippet',
+  getParentRoute: () => AraclarRoute,
 } as any)
 const AraclarRobotsRoute = AraclarRobotsRouteImport.update({
   id: '/robots',
@@ -364,6 +377,11 @@ const ApiAutumnSplatRoute = ApiAutumnSplatRouteImport.update({
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAccountProInterestRoute = ApiAccountProInterestRouteImport.update({
+  id: '/api/account/pro-interest',
+  path: '/api/account/pro-interest',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAccountLogoutRoute = ApiAccountLogoutRouteImport.update({
@@ -556,6 +574,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/araclar': typeof AraclarRouteWithChildren
   '/auth-error': typeof AuthErrorRoute
+  '/fiyatlandirma': typeof FiyatlandirmaRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/gizlilik': typeof GizlilikRoute
   '/health-report': typeof HealthReportRoute
@@ -585,6 +604,7 @@ export interface FileRoutesByFullPath {
   '/araclar/hiz': typeof AraclarHizRoute
   '/araclar/meta': typeof AraclarMetaRoute
   '/araclar/robots': typeof AraclarRobotsRoute
+  '/araclar/snippet': typeof AraclarSnippetRoute
   '/izleme/$token': typeof IzlemeTokenRoute
   '/r/$reportId': typeof RReportIdRoute
   '/report/$id': typeof ReportIdRouteWithChildren
@@ -594,6 +614,7 @@ export interface FileRoutesByFullPath {
   '/settings/organization': typeof AppSettingsOrganizationRoute
   '/api/account/login': typeof ApiAccountLoginRoute
   '/api/account/logout': typeof ApiAccountLogoutRoute
+  '/api/account/pro-interest': typeof ApiAccountProInterestRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/autumn/$': typeof ApiAutumnSplatRoute
   '/api/health-report/$id': typeof ApiHealthReportIdRoute
@@ -641,6 +662,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/araclar': typeof AraclarRouteWithChildren
   '/auth-error': typeof AuthErrorRoute
+  '/fiyatlandirma': typeof FiyatlandirmaRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/gizlilik': typeof GizlilikRoute
   '/health-report': typeof HealthReportRoute
@@ -669,6 +691,7 @@ export interface FileRoutesByTo {
   '/araclar/hiz': typeof AraclarHizRoute
   '/araclar/meta': typeof AraclarMetaRoute
   '/araclar/robots': typeof AraclarRobotsRoute
+  '/araclar/snippet': typeof AraclarSnippetRoute
   '/izleme/$token': typeof IzlemeTokenRoute
   '/r/$reportId': typeof RReportIdRoute
   '/report/$id': typeof ReportIdRouteWithChildren
@@ -677,6 +700,7 @@ export interface FileRoutesByTo {
   '/settings/organization': typeof AppSettingsOrganizationRoute
   '/api/account/login': typeof ApiAccountLoginRoute
   '/api/account/logout': typeof ApiAccountLogoutRoute
+  '/api/account/pro-interest': typeof ApiAccountProInterestRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/autumn/$': typeof ApiAutumnSplatRoute
   '/api/health-report/$id': typeof ApiHealthReportIdRoute
@@ -726,6 +750,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/araclar': typeof AraclarRouteWithChildren
   '/auth-error': typeof AuthErrorRoute
+  '/fiyatlandirma': typeof FiyatlandirmaRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/gizlilik': typeof GizlilikRoute
   '/health-report': typeof HealthReportRoute
@@ -755,6 +780,7 @@ export interface FileRoutesById {
   '/araclar/hiz': typeof AraclarHizRoute
   '/araclar/meta': typeof AraclarMetaRoute
   '/araclar/robots': typeof AraclarRobotsRoute
+  '/araclar/snippet': typeof AraclarSnippetRoute
   '/izleme/$token': typeof IzlemeTokenRoute
   '/r/$reportId': typeof RReportIdRoute
   '/report/$id': typeof ReportIdRouteWithChildren
@@ -764,6 +790,7 @@ export interface FileRoutesById {
   '/_app/settings/organization': typeof AppSettingsOrganizationRoute
   '/api/account/login': typeof ApiAccountLoginRoute
   '/api/account/logout': typeof ApiAccountLogoutRoute
+  '/api/account/pro-interest': typeof ApiAccountProInterestRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/autumn/$': typeof ApiAutumnSplatRoute
   '/api/health-report/$id': typeof ApiHealthReportIdRoute
@@ -813,6 +840,7 @@ export interface FileRouteTypes {
     | '/'
     | '/araclar'
     | '/auth-error'
+    | '/fiyatlandirma'
     | '/forgot-password'
     | '/gizlilik'
     | '/health-report'
@@ -842,6 +870,7 @@ export interface FileRouteTypes {
     | '/araclar/hiz'
     | '/araclar/meta'
     | '/araclar/robots'
+    | '/araclar/snippet'
     | '/izleme/$token'
     | '/r/$reportId'
     | '/report/$id'
@@ -851,6 +880,7 @@ export interface FileRouteTypes {
     | '/settings/organization'
     | '/api/account/login'
     | '/api/account/logout'
+    | '/api/account/pro-interest'
     | '/api/auth/$'
     | '/api/autumn/$'
     | '/api/health-report/$id'
@@ -898,6 +928,7 @@ export interface FileRouteTypes {
     | '/'
     | '/araclar'
     | '/auth-error'
+    | '/fiyatlandirma'
     | '/forgot-password'
     | '/gizlilik'
     | '/health-report'
@@ -926,6 +957,7 @@ export interface FileRouteTypes {
     | '/araclar/hiz'
     | '/araclar/meta'
     | '/araclar/robots'
+    | '/araclar/snippet'
     | '/izleme/$token'
     | '/r/$reportId'
     | '/report/$id'
@@ -934,6 +966,7 @@ export interface FileRouteTypes {
     | '/settings/organization'
     | '/api/account/login'
     | '/api/account/logout'
+    | '/api/account/pro-interest'
     | '/api/auth/$'
     | '/api/autumn/$'
     | '/api/health-report/$id'
@@ -982,6 +1015,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/araclar'
     | '/auth-error'
+    | '/fiyatlandirma'
     | '/forgot-password'
     | '/gizlilik'
     | '/health-report'
@@ -1011,6 +1045,7 @@ export interface FileRouteTypes {
     | '/araclar/hiz'
     | '/araclar/meta'
     | '/araclar/robots'
+    | '/araclar/snippet'
     | '/izleme/$token'
     | '/r/$reportId'
     | '/report/$id'
@@ -1020,6 +1055,7 @@ export interface FileRouteTypes {
     | '/_app/settings/organization'
     | '/api/account/login'
     | '/api/account/logout'
+    | '/api/account/pro-interest'
     | '/api/auth/$'
     | '/api/autumn/$'
     | '/api/health-report/$id'
@@ -1072,6 +1108,7 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AraclarRoute: typeof AraclarRouteWithChildren
   AuthErrorRoute: typeof AuthErrorRoute
+  FiyatlandirmaRoute: typeof FiyatlandirmaRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   GizlilikRoute: typeof GizlilikRoute
   HealthReportRoute: typeof HealthReportRoute
@@ -1092,6 +1129,7 @@ export interface RootRouteChildren {
   ReportIdRoute: typeof ReportIdRouteWithChildren
   ApiAccountLoginRoute: typeof ApiAccountLoginRoute
   ApiAccountLogoutRoute: typeof ApiAccountLogoutRoute
+  ApiAccountProInterestRoute: typeof ApiAccountProInterestRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiAutumnSplatRoute: typeof ApiAutumnSplatRoute
   ApiToolsMetaRoute: typeof ApiToolsMetaRoute
@@ -1183,6 +1221,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/fiyatlandirma': {
+      id: '/fiyatlandirma'
+      path: '/fiyatlandirma'
+      fullPath: '/fiyatlandirma'
+      preLoaderRoute: typeof FiyatlandirmaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth-error': {
       id: '/auth-error'
       path: '/auth-error'
@@ -1252,6 +1297,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/izleme/$token'
       preLoaderRoute: typeof IzlemeTokenRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/araclar/snippet': {
+      id: '/araclar/snippet'
+      path: '/snippet'
+      fullPath: '/araclar/snippet'
+      preLoaderRoute: typeof AraclarSnippetRouteImport
+      parentRoute: typeof AraclarRoute
     }
     '/araclar/robots': {
       id: '/araclar/robots'
@@ -1482,6 +1534,13 @@ declare module '@tanstack/react-router' {
       path: '/api/auth/$'
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/account/pro-interest': {
+      id: '/api/account/pro-interest'
+      path: '/api/account/pro-interest'
+      fullPath: '/api/account/pro-interest'
+      preLoaderRoute: typeof ApiAccountProInterestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/account/logout': {
@@ -1907,12 +1966,14 @@ interface AraclarRouteChildren {
   AraclarHizRoute: typeof AraclarHizRoute
   AraclarMetaRoute: typeof AraclarMetaRoute
   AraclarRobotsRoute: typeof AraclarRobotsRoute
+  AraclarSnippetRoute: typeof AraclarSnippetRoute
 }
 
 const AraclarRouteChildren: AraclarRouteChildren = {
   AraclarHizRoute: AraclarHizRoute,
   AraclarMetaRoute: AraclarMetaRoute,
   AraclarRobotsRoute: AraclarRobotsRoute,
+  AraclarSnippetRoute: AraclarSnippetRoute,
 }
 
 const AraclarRouteWithChildren =
@@ -1973,6 +2034,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AraclarRoute: AraclarRouteWithChildren,
   AuthErrorRoute: AuthErrorRoute,
+  FiyatlandirmaRoute: FiyatlandirmaRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   GizlilikRoute: GizlilikRoute,
   HealthReportRoute: HealthReportRoute,
@@ -1994,6 +2056,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReportIdRoute: ReportIdRouteWithChildren,
   ApiAccountLoginRoute: ApiAccountLoginRoute,
   ApiAccountLogoutRoute: ApiAccountLogoutRoute,
+  ApiAccountProInterestRoute: ApiAccountProInterestRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiAutumnSplatRoute: ApiAutumnSplatRoute,
   ApiToolsMetaRoute: ApiToolsMetaRoute,

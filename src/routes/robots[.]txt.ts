@@ -9,6 +9,7 @@ function handleRobots(request: Request): Response {
     "Allow: /$",
     "Allow: /report/",
     "Allow: /araclar",
+    "Allow: /fiyatlandirma",
     "Allow: /karsilastir",
     "Allow: /rehber",
     "Allow: /gizlilik",

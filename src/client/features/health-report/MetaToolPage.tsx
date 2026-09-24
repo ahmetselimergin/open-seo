@@ -1,6 +1,12 @@
 import * as React from "react";
 import { AlertTriangle, CheckCircle2, Search } from "lucide-react";
 import { Backdrop, PageStyles } from "@/client/features/health-report/visuals";
+import {
+  LanguageSwitcher,
+  LangProvider,
+  useLang,
+} from "@/client/features/health-report/i18n";
+import { toolsCopy } from "@/client/features/health-report/i18n-tools";
 
 interface MetaResult {
   url: string;
@@ -14,7 +20,6 @@ interface MetaResult {
   ogImage: string | null;
   isIndexable: boolean;
 }
-
 type State =
   | { status: "idle" }
   | { status: "loading" }
@@ -22,6 +27,16 @@ type State =
   | { status: "done"; result: MetaResult };
 
 export function MetaToolPage() {
+  return (
+    <LangProvider>
+      <MetaInner />
+    </LangProvider>
+  );
+}
+
+function MetaInner() {
+  const t = toolsCopy(useLang().lang);
+  const c = t.meta;
   const [url, setUrl] = React.useState("");
   const [view, setView] = React.useState<State>({ status: "idle" });
 
@@ -39,13 +54,13 @@ export function MetaToolPage() {
       if (!res.ok || "error" in data) {
         setView({
           status: "error",
-          message: "error" in data ? data.error : "Bir hata oluştu.",
+          message: "error" in data ? data.error : t.genericError,
         });
         return;
       }
       setView({ status: "done", result: data });
     } catch {
-      setView({ status: "error", message: "Bağlantı hatası, tekrar deneyin." });
+      setView({ status: "error", message: t.connError });
     }
   };
 
@@ -58,23 +73,22 @@ export function MetaToolPage() {
           <a href="/" className="text-lg font-bold tracking-tight">
             my<span className="hr-accent">Seo</span>
           </a>
-          <a
-            href="/"
-            className="text-sm text-base-content/60 hover:text-base-content"
-          >
-            Tam tarama
-          </a>
+          <div className="flex items-center gap-4 text-sm text-base-content/60">
+            <a href="/araclar" className="hover:text-base-content">
+              {t.allTools}
+            </a>
+            <LanguageSwitcher />
+          </div>
         </div>
       </header>
 
       <main className="mx-auto w-full max-w-3xl px-5 pb-28 pt-10">
         <div className="text-center">
           <h1 className="text-[clamp(2rem,5vw,3.25rem)] font-semibold leading-[1.05] tracking-[-0.02em]">
-            Meta etiket <span className="hr-accent">kontrolü</span>
+            {c.title} <span className="hr-accent">{c.accent}</span>
           </h1>
           <p className="mx-auto mt-4 max-w-lg text-base-content/60">
-            Bir sayfanın başlık, açıklama ve paylaşım etiketlerini görün; Google
-            ve sosyal medyada nasıl göründüğünü önizleyin.
+            {c.subtitle}
           </p>
         </div>
 
@@ -82,7 +96,7 @@ export function MetaToolPage() {
           <input
             type="text"
             inputMode="url"
-            placeholder="siteniz.com/sayfa"
+            placeholder={c.placeholder}
             className="hr-field w-full rounded-2xl border border-base-300 px-4 py-3.5 text-base outline-none transition-[border-color,box-shadow] placeholder:text-base-content/35"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
@@ -94,7 +108,7 @@ export function MetaToolPage() {
             disabled={view.status === "loading"}
           >
             <Search className="size-4" />
-            {view.status === "loading" ? "…" : "Kontrol et"}
+            {view.status === "loading" ? t.loading : t.check}
           </button>
         </form>
 
@@ -111,14 +125,15 @@ export function MetaToolPage() {
 }
 
 function Results({ result }: { result: MetaResult }) {
+  const c = toolsCopy(useLang().lang).meta;
   const host = safeHost(result.url);
-  const title = result.title || "(başlık yok)";
-  const desc = result.metaDescription || "(açıklama yok)";
+  const title = result.title || c.noTitle;
+  const desc = result.metaDescription || c.noDesc;
   return (
     <div className="mt-10 flex flex-col gap-6">
       <section className="hr-in hr-surface rounded-3xl p-6">
         <h2 className="mb-3 text-sm font-semibold text-base-content/50">
-          Google önizlemesi
+          {c.googlePreview}
         </h2>
         <p className="text-xs text-base-content/50">{host}</p>
         <p className="mt-1 text-lg text-[#8ab4f8]">{truncate(title, 60)}</p>
@@ -132,7 +147,7 @@ function Results({ result }: { result: MetaResult }) {
         style={{ animationDelay: "80ms" }}
       >
         <h2 className="px-6 pt-6 text-sm font-semibold text-base-content/50">
-          Sosyal medya önizlemesi
+          {c.socialPreview}
         </h2>
         {result.ogImage && (
           <img
@@ -155,11 +170,11 @@ function Results({ result }: { result: MetaResult }) {
         style={{ animationDelay: "160ms" }}
       >
         <h2 className="mb-4 text-sm font-semibold text-base-content/50">
-          Kontroller
+          {c.checks}
         </h2>
         <div className="flex flex-col divide-y divide-base-300">
-          {buildChecks(result).map((c) => (
-            <Check key={c.label} {...c} />
+          {buildChecks(result, c).map((k) => (
+            <Check key={k.label} {...k} />
           ))}
         </div>
       </section>
@@ -189,45 +204,34 @@ function Check({ label, ok, detail }: CheckItem) {
   );
 }
 
-function buildChecks(r: MetaResult): CheckItem[] {
+function buildChecks(
+  r: MetaResult,
+  c: ReturnType<typeof toolsCopy>["meta"],
+): CheckItem[] {
   const tLen = r.title.length;
   const dLen = r.metaDescription.length;
   return [
     {
-      label: "Başlık etiketi",
+      label: c.lTitle,
       ok: tLen >= 10 && tLen <= 60,
-      detail: r.title
-        ? `${tLen} karakter (ideal 10–60).`
-        : "Başlık bulunamadı.",
+      detail: c.dTitle(tLen, Boolean(r.title)),
     },
     {
-      label: "Meta açıklama",
+      label: c.lDesc,
       ok: dLen >= 70 && dLen <= 160,
-      detail: r.metaDescription
-        ? `${dLen} karakter (ideal 70–160).`
-        : "Açıklama bulunamadı.",
+      detail: c.dDesc(dLen, Boolean(r.metaDescription)),
     },
+    { label: c.lH1, ok: r.h1Count === 1, detail: c.dH1(r.h1Count) },
     {
-      label: "Tek H1 başlığı",
-      ok: r.h1Count === 1,
-      detail: `${r.h1Count} adet H1 bulundu (ideal 1).`,
-    },
-    {
-      label: "Canonical adres",
+      label: c.lCanonical,
       ok: Boolean(r.canonicalUrl),
-      detail: r.canonicalUrl ? r.canonicalUrl : "Canonical etiketi yok.",
+      detail: c.dCanonical(r.canonicalUrl),
     },
+    { label: c.lOg, ok: Boolean(r.ogImage), detail: c.dOg(Boolean(r.ogImage)) },
     {
-      label: "Sosyal paylaşım görseli (og:image)",
-      ok: Boolean(r.ogImage),
-      detail: r.ogImage ? "Mevcut." : "og:image bulunamadı.",
-    },
-    {
-      label: "İndekslenebilir",
+      label: c.lIndexable,
       ok: r.isIndexable,
-      detail: r.isIndexable
-        ? "Sayfa arama motorlarına açık."
-        : "Sayfa noindex ile engellenmiş.",
+      detail: c.dIndexable(r.isIndexable),
     },
   ];
 }

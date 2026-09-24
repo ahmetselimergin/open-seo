@@ -6,10 +6,12 @@ function handleSitemap(request: Request): Response {
   const origin = new URL(request.url).origin;
   const paths = [
     "/",
+    "/fiyatlandirma",
     "/araclar",
     "/araclar/meta",
     "/araclar/robots",
     "/araclar/hiz",
+    "/araclar/snippet",
     "/karsilastir",
     "/rehber",
     "/gizlilik",
