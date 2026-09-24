@@ -30,7 +30,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ReportIdRouteImport } from './routes/report.$id'
 import { Route as RReportIdRouteImport } from './routes/r/$reportId'
 import { Route as IzlemeTokenRouteImport } from './routes/izleme.$token'
+import { Route as AraclarRobotsRouteImport } from './routes/araclar.robots'
 import { Route as AraclarMetaRouteImport } from './routes/araclar.meta'
+import { Route as AraclarHizRouteImport } from './routes/araclar.hiz'
 import { Route as ApiHealthReportRouteImport } from './routes/api/health-report'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as AcceptInvitationIdRouteImport } from './routes/accept-invitation.$id'
@@ -53,6 +55,8 @@ import { Route as STokenRawRouteImport } from './routes/s/$token/raw'
 import { Route as STokenOgDotpngRouteImport } from './routes/s/$token/og[.]png'
 import { Route as ReportIdOgDotpngRouteImport } from './routes/report.$id.og[.]png'
 import { Route as ReportIdBadgeDotsvgRouteImport } from './routes/report.$id.badge[.]svg'
+import { Route as ApiToolsRobotsRouteImport } from './routes/api/tools.robots'
+import { Route as ApiToolsPagespeedRouteImport } from './routes/api/tools.pagespeed'
 import { Route as ApiToolsMetaRouteImport } from './routes/api/tools.meta'
 import { Route as ApiHealthReportMonitorRouteImport } from './routes/api/health-report.monitor'
 import { Route as ApiHealthReportCompareRouteImport } from './routes/api/health-report.compare'
@@ -194,9 +198,19 @@ const IzlemeTokenRoute = IzlemeTokenRouteImport.update({
   path: '/izleme/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AraclarRobotsRoute = AraclarRobotsRouteImport.update({
+  id: '/robots',
+  path: '/robots',
+  getParentRoute: () => AraclarRoute,
+} as any)
 const AraclarMetaRoute = AraclarMetaRouteImport.update({
   id: '/meta',
   path: '/meta',
+  getParentRoute: () => AraclarRoute,
+} as any)
+const AraclarHizRoute = AraclarHizRouteImport.update({
+  id: '/hiz',
+  path: '/hiz',
   getParentRoute: () => AraclarRoute,
 } as any)
 const ApiHealthReportRoute = ApiHealthReportRouteImport.update({
@@ -311,6 +325,16 @@ const ReportIdBadgeDotsvgRoute = ReportIdBadgeDotsvgRouteImport.update({
   id: '/badge.svg',
   path: '/badge.svg',
   getParentRoute: () => ReportIdRoute,
+} as any)
+const ApiToolsRobotsRoute = ApiToolsRobotsRouteImport.update({
+  id: '/api/tools/robots',
+  path: '/api/tools/robots',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiToolsPagespeedRoute = ApiToolsPagespeedRouteImport.update({
+  id: '/api/tools/pagespeed',
+  path: '/api/tools/pagespeed',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiToolsMetaRoute = ApiToolsMetaRouteImport.update({
   id: '/api/tools/meta',
@@ -558,7 +582,9 @@ export interface FileRoutesByFullPath {
   '/accept-invitation/$id': typeof AcceptInvitationIdRoute
   '/api/health': typeof ApiHealthRoute
   '/api/health-report': typeof ApiHealthReportRouteWithChildren
+  '/araclar/hiz': typeof AraclarHizRoute
   '/araclar/meta': typeof AraclarMetaRoute
+  '/araclar/robots': typeof AraclarRobotsRoute
   '/izleme/$token': typeof IzlemeTokenRoute
   '/r/$reportId': typeof RReportIdRoute
   '/report/$id': typeof ReportIdRouteWithChildren
@@ -574,6 +600,8 @@ export interface FileRoutesByFullPath {
   '/api/health-report/compare': typeof ApiHealthReportCompareRoute
   '/api/health-report/monitor': typeof ApiHealthReportMonitorRouteWithChildren
   '/api/tools/meta': typeof ApiToolsMetaRoute
+  '/api/tools/pagespeed': typeof ApiToolsPagespeedRoute
+  '/api/tools/robots': typeof ApiToolsRobotsRoute
   '/report/$id/badge.svg': typeof ReportIdBadgeDotsvgRoute
   '/report/$id/og.png': typeof ReportIdOgDotpngRoute
   '/s/$token/og.png': typeof STokenOgDotpngRoute
@@ -638,7 +666,9 @@ export interface FileRoutesByTo {
   '/accept-invitation/$id': typeof AcceptInvitationIdRoute
   '/api/health': typeof ApiHealthRoute
   '/api/health-report': typeof ApiHealthReportRouteWithChildren
+  '/araclar/hiz': typeof AraclarHizRoute
   '/araclar/meta': typeof AraclarMetaRoute
+  '/araclar/robots': typeof AraclarRobotsRoute
   '/izleme/$token': typeof IzlemeTokenRoute
   '/r/$reportId': typeof RReportIdRoute
   '/report/$id': typeof ReportIdRouteWithChildren
@@ -653,6 +683,8 @@ export interface FileRoutesByTo {
   '/api/health-report/compare': typeof ApiHealthReportCompareRoute
   '/api/health-report/monitor': typeof ApiHealthReportMonitorRouteWithChildren
   '/api/tools/meta': typeof ApiToolsMetaRoute
+  '/api/tools/pagespeed': typeof ApiToolsPagespeedRoute
+  '/api/tools/robots': typeof ApiToolsRobotsRoute
   '/report/$id/badge.svg': typeof ReportIdBadgeDotsvgRoute
   '/report/$id/og.png': typeof ReportIdOgDotpngRoute
   '/s/$token/og.png': typeof STokenOgDotpngRoute
@@ -720,7 +752,9 @@ export interface FileRoutesById {
   '/accept-invitation/$id': typeof AcceptInvitationIdRoute
   '/api/health': typeof ApiHealthRoute
   '/api/health-report': typeof ApiHealthReportRouteWithChildren
+  '/araclar/hiz': typeof AraclarHizRoute
   '/araclar/meta': typeof AraclarMetaRoute
+  '/araclar/robots': typeof AraclarRobotsRoute
   '/izleme/$token': typeof IzlemeTokenRoute
   '/r/$reportId': typeof RReportIdRoute
   '/report/$id': typeof ReportIdRouteWithChildren
@@ -736,6 +770,8 @@ export interface FileRoutesById {
   '/api/health-report/compare': typeof ApiHealthReportCompareRoute
   '/api/health-report/monitor': typeof ApiHealthReportMonitorRouteWithChildren
   '/api/tools/meta': typeof ApiToolsMetaRoute
+  '/api/tools/pagespeed': typeof ApiToolsPagespeedRoute
+  '/api/tools/robots': typeof ApiToolsRobotsRoute
   '/report/$id/badge.svg': typeof ReportIdBadgeDotsvgRoute
   '/report/$id/og.png': typeof ReportIdOgDotpngRoute
   '/s/$token/og.png': typeof STokenOgDotpngRoute
@@ -803,7 +839,9 @@ export interface FileRouteTypes {
     | '/accept-invitation/$id'
     | '/api/health'
     | '/api/health-report'
+    | '/araclar/hiz'
     | '/araclar/meta'
+    | '/araclar/robots'
     | '/izleme/$token'
     | '/r/$reportId'
     | '/report/$id'
@@ -819,6 +857,8 @@ export interface FileRouteTypes {
     | '/api/health-report/compare'
     | '/api/health-report/monitor'
     | '/api/tools/meta'
+    | '/api/tools/pagespeed'
+    | '/api/tools/robots'
     | '/report/$id/badge.svg'
     | '/report/$id/og.png'
     | '/s/$token/og.png'
@@ -883,7 +923,9 @@ export interface FileRouteTypes {
     | '/accept-invitation/$id'
     | '/api/health'
     | '/api/health-report'
+    | '/araclar/hiz'
     | '/araclar/meta'
+    | '/araclar/robots'
     | '/izleme/$token'
     | '/r/$reportId'
     | '/report/$id'
@@ -898,6 +940,8 @@ export interface FileRouteTypes {
     | '/api/health-report/compare'
     | '/api/health-report/monitor'
     | '/api/tools/meta'
+    | '/api/tools/pagespeed'
+    | '/api/tools/robots'
     | '/report/$id/badge.svg'
     | '/report/$id/og.png'
     | '/s/$token/og.png'
@@ -964,7 +1008,9 @@ export interface FileRouteTypes {
     | '/accept-invitation/$id'
     | '/api/health'
     | '/api/health-report'
+    | '/araclar/hiz'
     | '/araclar/meta'
+    | '/araclar/robots'
     | '/izleme/$token'
     | '/r/$reportId'
     | '/report/$id'
@@ -980,6 +1026,8 @@ export interface FileRouteTypes {
     | '/api/health-report/compare'
     | '/api/health-report/monitor'
     | '/api/tools/meta'
+    | '/api/tools/pagespeed'
+    | '/api/tools/robots'
     | '/report/$id/badge.svg'
     | '/report/$id/og.png'
     | '/s/$token/og.png'
@@ -1047,6 +1095,8 @@ export interface RootRouteChildren {
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiAutumnSplatRoute: typeof ApiAutumnSplatRoute
   ApiToolsMetaRoute: typeof ApiToolsMetaRoute
+  ApiToolsPagespeedRoute: typeof ApiToolsPagespeedRoute
+  ApiToolsRobotsRoute: typeof ApiToolsRobotsRoute
   STokenOgDotpngRoute: typeof STokenOgDotpngRoute
   STokenRawRoute: typeof STokenRawRoute
   STokenIndexRoute: typeof STokenIndexRoute
@@ -1203,11 +1253,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IzlemeTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/araclar/robots': {
+      id: '/araclar/robots'
+      path: '/robots'
+      fullPath: '/araclar/robots'
+      preLoaderRoute: typeof AraclarRobotsRouteImport
+      parentRoute: typeof AraclarRoute
+    }
     '/araclar/meta': {
       id: '/araclar/meta'
       path: '/meta'
       fullPath: '/araclar/meta'
       preLoaderRoute: typeof AraclarMetaRouteImport
+      parentRoute: typeof AraclarRoute
+    }
+    '/araclar/hiz': {
+      id: '/araclar/hiz'
+      path: '/hiz'
+      fullPath: '/araclar/hiz'
+      preLoaderRoute: typeof AraclarHizRouteImport
       parentRoute: typeof AraclarRoute
     }
     '/api/health-report': {
@@ -1363,6 +1427,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/report/$id/badge.svg'
       preLoaderRoute: typeof ReportIdBadgeDotsvgRouteImport
       parentRoute: typeof ReportIdRoute
+    }
+    '/api/tools/robots': {
+      id: '/api/tools/robots'
+      path: '/api/tools/robots'
+      fullPath: '/api/tools/robots'
+      preLoaderRoute: typeof ApiToolsRobotsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/tools/pagespeed': {
+      id: '/api/tools/pagespeed'
+      path: '/api/tools/pagespeed'
+      fullPath: '/api/tools/pagespeed'
+      preLoaderRoute: typeof ApiToolsPagespeedRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/tools/meta': {
       id: '/api/tools/meta'
@@ -1826,11 +1904,15 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 )
 
 interface AraclarRouteChildren {
+  AraclarHizRoute: typeof AraclarHizRoute
   AraclarMetaRoute: typeof AraclarMetaRoute
+  AraclarRobotsRoute: typeof AraclarRobotsRoute
 }
 
 const AraclarRouteChildren: AraclarRouteChildren = {
+  AraclarHizRoute: AraclarHizRoute,
   AraclarMetaRoute: AraclarMetaRoute,
+  AraclarRobotsRoute: AraclarRobotsRoute,
 }
 
 const AraclarRouteWithChildren =
@@ -1915,6 +1997,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiAutumnSplatRoute: ApiAutumnSplatRoute,
   ApiToolsMetaRoute: ApiToolsMetaRoute,
+  ApiToolsPagespeedRoute: ApiToolsPagespeedRoute,
+  ApiToolsRobotsRoute: ApiToolsRobotsRoute,
   STokenOgDotpngRoute: STokenOgDotpngRoute,
   STokenRawRoute: STokenRawRoute,
   STokenIndexRoute: STokenIndexRoute,

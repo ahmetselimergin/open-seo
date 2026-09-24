@@ -25,6 +25,16 @@ const TOOLS: Tool[] = [
     desc: "Bir sayfanın başlık, açıklama ve OG etiketlerini kontrol edin; Google ve sosyal medya önizlemesini görün.",
   },
   {
+    href: "/araclar/robots",
+    name: "robots.txt & Sitemap Kontrolü",
+    desc: "Siteniz arama motorlarına açık mı, site haritanız var mı — saniyeler içinde kontrol edin.",
+  },
+  {
+    href: "/araclar/hiz",
+    name: "Sayfa Hızı & Core Web Vitals",
+    desc: "Google verileriyle mobil performans skorunuzu ve temel hız metriklerinizi ölçün.",
+  },
+  {
     href: "/rehber",
     name: "SEO Sağlık Rehberi",
     desc: "Yaygın SEO sorunlarının ne anlama geldiğini ve nasıl düzeltileceğini sade Türkçe ile öğrenin.",

@@ -8,6 +8,8 @@ function handleSitemap(request: Request): Response {
     "/",
     "/araclar",
     "/araclar/meta",
+    "/araclar/robots",
+    "/araclar/hiz",
     "/karsilastir",
     "/rehber",
     "/gizlilik",
