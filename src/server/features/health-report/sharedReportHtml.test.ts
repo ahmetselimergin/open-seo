@@ -42,6 +42,19 @@ describe("renderSharedReportHtml", () => {
     expect(html).not.toContain("Genel sağlık skoru");
   });
 
+  it("lists affected example pages and links to the guide", () => {
+    const html = renderSharedReportHtml({
+      report,
+      id: "abc",
+      origin: "https://myseo.example",
+    });
+    expect(html).toContain("Etkilenen sayfalar");
+    // The example affected page URL is shown.
+    expect(html).toContain("example.com/a");
+    // Each problem links to its guide anchor.
+    expect(html).toContain('href="https://myseo.example/rehber#missing-title"');
+  });
+
   it("always emits canonical + OpenGraph pointing at the given origin", () => {
     const html = renderSharedReportHtml({
       report,

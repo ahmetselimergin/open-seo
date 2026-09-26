@@ -39,9 +39,14 @@ export interface TopProblem {
   title: string;
   severity: IssueSeverity;
   affectedPages: number;
+  /** Up to a few example affected page URLs, so the report is actionable. */
+  examplePages: string[];
   whatItMeans: string;
   howToFix: string;
 }
+
+/** How many example URLs to keep per problem (report stays compact). */
+const MAX_EXAMPLE_PAGES = 5;
 
 export interface ActionItem {
   week: number;
@@ -185,6 +190,7 @@ function buildTopProblems(
     title: agg.copy.title,
     severity: agg.severity,
     affectedPages: agg.affectedPages.size,
+    examplePages: [...agg.affectedPages].slice(0, MAX_EXAMPLE_PAGES),
     whatItMeans: agg.copy.whatItMeans,
     howToFix: agg.copy.howToFix,
   }));

@@ -78,7 +78,7 @@ function itemsFor(
     .map(([issueType]) => {
       const copy = getIssueCopy(issueType, lang);
       if (!copy) return "";
-      return `<article class="g">
+      return `<article class="g" id="${issueType}">
         <h3>${copy.title}</h3>
         <p>${copy.whatItMeans}</p>
         <p class="fix"><span>${t.howToFix}</span> ${copy.howToFix}</p>
@@ -128,7 +128,8 @@ export function renderGuideHtml(
   .lead{color:#c3cbd6;margin-top:14px;font-size:1.1rem}
   .sev{font-size:1.4rem;letter-spacing:-.01em;margin:44px 0 8px;padding-bottom:8px;border-bottom:1px solid #232a36}
   .sev-critical{color:#ef4444}.sev-warning{color:#f59e0b}.sev-info{color:${accent}}
-  .g{padding:18px 0;border-bottom:1px solid #161b23}
+  .g{padding:18px 0;border-bottom:1px solid #161b23;scroll-margin-top:80px}
+  .g:target h3{color:#35c6f4}
   .g h3{font-size:1.15rem;font-weight:600}
   .g p{color:#c3cbd6;margin-top:6px}
   .g .fix{color:#9aa4b2}

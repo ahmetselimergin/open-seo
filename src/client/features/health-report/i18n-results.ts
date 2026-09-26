@@ -18,6 +18,9 @@ export interface ResultsCopy {
   noIssuesBody: string;
   topProblems: string;
   detectedOn: (n: number) => string;
+  affectedPagesLabel: string;
+  moreCount: (n: number) => string;
+  detailedGuide: string;
   whatItMeans: string;
   howToFix: string;
   planHeading: string;
@@ -26,6 +29,26 @@ export interface ResultsCopy {
   footerHeading: string;
   footerBody: string;
   footerButton: string;
+  share: { copied: string; share: string; promptLabel: string };
+  badge: {
+    title: string;
+    subtitle: string;
+    copyCode: string;
+    copied: string;
+    promptLabel: string;
+    alt: string;
+  };
+  monitor: {
+    title: string;
+    subtitle: string;
+    done: string;
+    openPanel: string;
+    placeholder: string;
+    watch: string;
+    saving: string;
+    error: string;
+    emailLabel: string;
+  };
 }
 
 export interface CompareCopy {
@@ -65,6 +88,9 @@ const RESULTS_TR: ResultsCopy = {
     "Taranan sayfalarda acil bir sorun çıkmadı. Aşağıdaki plan sitenizi daha da güçlendirmenize yardımcı olur.",
   topProblems: "Öncelikli 3 sorun",
   detectedOn: (n) => `${n} sayfada tespit edildi`,
+  affectedPagesLabel: "Etkilenen sayfalar",
+  moreCount: (n) => `+${n} sayfa daha`,
+  detailedGuide: "Detaylı rehber →",
   whatItMeans: "Ne anlama geliyor?",
   howToFix: "Nasıl düzeltilir?",
   planHeading: "30 günlük eylem planı",
@@ -74,6 +100,30 @@ const RESULTS_TR: ResultsCopy = {
   footerBody:
     "mySeo ile rakip analizi, anahtar kelime araştırması, sıralama takibi ve tam site denetimini tek yerde yapın.",
   footerButton: "mySeo'yu keşfet",
+  share: {
+    copied: "Kopyalandı",
+    share: "Paylaş",
+    promptLabel: "Rapor bağlantısı:",
+  },
+  badge: {
+    title: "Rozeti sitene ekle",
+    subtitle: "Skorunu sitende göster, ziyaretçilerin güvenini kazan.",
+    copyCode: "Kodu kopyala",
+    copied: "Kopyalandı",
+    promptLabel: "Rozet kodu:",
+    alt: "mySeo SEO Skoru",
+  },
+  monitor: {
+    title: "Bu siteyi haftalık izle",
+    subtitle: "Skorun değişince e-posta ile haber verelim.",
+    done: "Eklendi, skor değişince haber vereceğiz.",
+    openPanel: "İzleme panelini aç →",
+    placeholder: "siz@example.com",
+    watch: "İzle",
+    saving: "...",
+    error: "Bir hata oluştu, tekrar deneyin.",
+    emailLabel: "E-posta",
+  },
 };
 
 const RESULTS_EN: ResultsCopy = {
@@ -91,6 +141,9 @@ const RESULTS_EN: ResultsCopy = {
     "No urgent issues came up on the scanned pages. The plan below helps you strengthen your site even further.",
   topProblems: "Top 3 issues",
   detectedOn: (n) => `Detected on ${n} pages`,
+  affectedPagesLabel: "Affected pages",
+  moreCount: (n) => `+${n} more`,
+  detailedGuide: "Detailed guide →",
   whatItMeans: "What does it mean?",
   howToFix: "How to fix it?",
   planHeading: "30-day action plan",
@@ -100,6 +153,30 @@ const RESULTS_EN: ResultsCopy = {
   footerBody:
     "With mySeo, do competitor analysis, keyword research, rank tracking and a full site audit all in one place.",
   footerButton: "Explore mySeo",
+  share: {
+    copied: "Copied",
+    share: "Share",
+    promptLabel: "Report link:",
+  },
+  badge: {
+    title: "Add the badge to your site",
+    subtitle: "Show your score on your site and earn visitors' trust.",
+    copyCode: "Copy code",
+    copied: "Copied",
+    promptLabel: "Badge code:",
+    alt: "mySeo SEO Score",
+  },
+  monitor: {
+    title: "Monitor this site weekly",
+    subtitle: "We'll email you when your score changes.",
+    done: "Added — we'll let you know when the score changes.",
+    openPanel: "Open monitoring panel →",
+    placeholder: "you@example.com",
+    watch: "Monitor",
+    saving: "...",
+    error: "Something went wrong, please try again.",
+    emailLabel: "Email",
+  },
 };
 
 const COMPARE_TR: CompareCopy = {

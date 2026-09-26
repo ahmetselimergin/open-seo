@@ -88,6 +88,22 @@ describe("buildHealthReport", () => {
     // Copy is present and Turkish.
     expect(report.topProblems[0].title.length).toBeGreaterThan(0);
     expect(report.topProblems[0].howToFix.length).toBeGreaterThan(0);
+    // Example affected pages are captured so the report is actionable.
+    expect(report.topProblems[0].examplePages).toEqual([
+      "https://example.com/4",
+      "https://example.com/5",
+    ]);
+  });
+
+  it("caps example pages per problem and keeps the full count", () => {
+    const issues = Array.from({ length: 8 }, (_, i) => ({
+      issueType: "missing-title",
+      pageUrl: `https://example.com/${i}`,
+    }));
+    const report = buildHealthReport(baseInput({ pagesCrawled: 8, issues }));
+    const problem = report.topProblems[0];
+    expect(problem.affectedPages).toBe(8);
+    expect(problem.examplePages).toHaveLength(5); // MAX_EXAMPLE_PAGES
   });
 
   it("caps the penalty per severity so score never underflows", () => {

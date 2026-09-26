@@ -1,8 +1,11 @@
 import * as React from "react";
 import { Bell, Check, Code, Link2 } from "lucide-react";
+import { useLang } from "@/client/features/health-report/i18n";
+import { resultsCopy } from "@/client/features/health-report/i18n-results";
 
 /** Copy-share-link button shown on a report. */
 export function ShareButton({ shareId }: { shareId: string }) {
+  const t = resultsCopy(useLang().lang).share;
   const [copied, setCopied] = React.useState(false);
   const copy = async () => {
     const url = `${window.location.origin}/report/${shareId}`;
@@ -11,7 +14,7 @@ export function ShareButton({ shareId }: { shareId: string }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      window.prompt("Rapor bağlantısı:", url);
+      window.prompt(t.promptLabel, url);
     }
   };
   return (
@@ -21,11 +24,11 @@ export function ShareButton({ shareId }: { shareId: string }) {
     >
       {copied ? (
         <>
-          <Check className="hr-accent size-4" /> Kopyalandı
+          <Check className="hr-accent size-4" /> {t.copied}
         </>
       ) : (
         <>
-          <Link2 className="size-4" /> Paylaş
+          <Link2 className="size-4" /> {t.share}
         </>
       )}
     </button>
@@ -34,11 +37,12 @@ export function ShareButton({ shareId }: { shareId: string }) {
 
 /** Copy-paste embed badge for a shared report (drives backlinks). */
 export function BadgeEmbed({ shareId }: { shareId: string }) {
+  const t = resultsCopy(useLang().lang).badge;
   const [copied, setCopied] = React.useState(false);
   const [origin, setOrigin] = React.useState("");
   React.useEffect(() => setOrigin(window.location.origin), []);
 
-  const snippet = `<a href="${origin}/report/${shareId}" target="_blank" rel="noopener">\n  <img src="${origin}/report/${shareId}/badge.svg" alt="mySeo SEO Skoru" width="212" height="56"/>\n</a>`;
+  const snippet = `<a href="${origin}/report/${shareId}" target="_blank" rel="noopener">\n  <img src="${origin}/report/${shareId}/badge.svg" alt="${t.alt}" width="212" height="56"/>\n</a>`;
 
   const copy = async () => {
     try {
@@ -46,7 +50,7 @@ export function BadgeEmbed({ shareId }: { shareId: string }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      window.prompt("Rozet kodu:", snippet);
+      window.prompt(t.promptLabel, snippet);
     }
   };
 
@@ -56,23 +60,21 @@ export function BadgeEmbed({ shareId }: { shareId: string }) {
       style={{ animationDelay: "260ms" }}
     >
       <div>
-        <h3 className="font-bold tracking-tight">Rozeti sitene ekle</h3>
-        <p className="mt-0.5 text-sm text-base-content/60">
-          Skorunu sitende göster, ziyaretçilerin güvenini kazan.
-        </p>
+        <h3 className="font-bold tracking-tight">{t.title}</h3>
+        <p className="mt-0.5 text-sm text-base-content/60">{t.subtitle}</p>
       </div>
       <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
         {origin && (
           <img
             src={`${origin}/report/${shareId}/badge.svg`}
-            alt="mySeo SEO Skoru"
+            alt={t.alt}
             width={212}
             height={56}
             className="shrink-0"
           />
         )}
         <div className="w-full flex-1">
-          <pre className="overflow-x-auto rounded-xl bg-base-200/60 p-3 font-mono text-xs whitespace-pre text-base-content/70">
+          <pre className="whitespace-pre-line bg-base-200/60 p-3 font-mono text-xs text-base-content/70">
             {snippet}
           </pre>
           <button
@@ -81,11 +83,11 @@ export function BadgeEmbed({ shareId }: { shareId: string }) {
           >
             {copied ? (
               <>
-                <Check className="size-4" /> Kopyalandı
+                <Check className="size-4" /> {t.copied}
               </>
             ) : (
               <>
-                <Code className="size-4" /> Kodu kopyala
+                <Code className="size-4" /> {t.copyCode}
               </>
             )}
           </button>
@@ -103,6 +105,7 @@ export function MonitorCard({
   domain: string;
   score: number;
 }) {
+  const t = resultsCopy(useLang().lang).monitor;
   const [email, setEmail] = React.useState("");
   const [token, setToken] = React.useState<string | null>(null);
   const [state, setState] = React.useState<
@@ -141,25 +144,22 @@ export function MonitorCard({
           <Bell className="hr-accent size-5" />
         </span>
         <div>
-          <h3 className="font-bold tracking-tight">Bu siteyi haftalık izle</h3>
-          <p className="mt-0.5 text-sm text-base-content/60">
-            Skorun değişince e-posta ile haber verelim.
-          </p>
+          <h3 className="font-bold tracking-tight">{t.title}</h3>
+          <p className="mt-0.5 text-sm text-base-content/60">{t.subtitle}</p>
         </div>
       </div>
 
       {state === "done" ? (
         <div className="flex flex-col items-start gap-1 sm:items-end">
           <p className="inline-flex items-center gap-2 text-sm font-medium text-success">
-            <Check className="size-4" /> Eklendi, skor değişince haber
-            vereceğiz.
+            <Check className="size-4" /> {t.done}
           </p>
           {token && (
             <a
               href={`/izleme/${token}`}
               className="hr-accent text-sm font-medium hover:underline"
             >
-              İzleme panelini aç →
+              {t.openPanel}
             </a>
           )}
         </div>
@@ -172,8 +172,8 @@ export function MonitorCard({
             <input
               type="email"
               required
-              aria-label="E-posta"
-              placeholder="siz@example.com"
+              aria-label={t.emailLabel}
+              placeholder={t.placeholder}
               className="hr-field w-full rounded-xl border border-base-300 px-3.5 py-2.5 text-sm outline-none transition-[border-color,box-shadow] placeholder:text-base-content/35 sm:w-56"
               value={email}
               onChange={(ev) => setEmail(ev.target.value)}
@@ -183,14 +183,10 @@ export function MonitorCard({
               className="hr-cta shrink-0 rounded-xl px-4 py-2.5 text-sm font-semibold disabled:opacity-50"
               disabled={state === "saving"}
             >
-              {state === "saving" ? "..." : "İzle"}
+              {state === "saving" ? t.saving : t.watch}
             </button>
           </div>
-          {state === "error" && (
-            <p className="text-xs text-error">
-              Bir hata oluştu, tekrar deneyin.
-            </p>
-          )}
+          {state === "error" && <p className="text-xs text-error">{t.error}</p>}
         </form>
       )}
     </section>

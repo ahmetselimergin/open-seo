@@ -22,6 +22,9 @@ interface SharedCopy {
   noIssuesTitle: string;
   noIssuesBody: string;
   topProblems: string;
+  affectedPagesLabel: string;
+  moreCount: (n: number) => string;
+  detailedGuide: string;
   whatItMeans: string;
   howToFix: string;
   planHeading: string;
@@ -46,6 +49,9 @@ const SHARED_COPY: Record<ReportLang, SharedCopy> = {
     noIssuesTitle: "Sorun bulunamadı",
     noIssuesBody: "Taranan sayfalarda acil bir sorun çıkmadı.",
     topProblems: "Öncelikli 3 sorun",
+    affectedPagesLabel: "Etkilenen sayfalar",
+    moreCount: (n) => `+${n} sayfa daha`,
+    detailedGuide: "Detaylı rehber →",
     whatItMeans: "Ne anlama geliyor?",
     howToFix: "Nasıl düzeltilir?",
     planHeading: "30 günlük eylem planı",
@@ -68,6 +74,9 @@ const SHARED_COPY: Record<ReportLang, SharedCopy> = {
     noIssuesTitle: "No issues found",
     noIssuesBody: "No urgent issues came up on the scanned pages.",
     topProblems: "Top 3 issues",
+    affectedPagesLabel: "Affected pages",
+    moreCount: (n) => `+${n} more`,
+    detailedGuide: "Detailed guide →",
     whatItMeans: "What does it mean?",
     howToFix: "How to fix it?",
     planHeading: "30-day action plan",
@@ -78,6 +87,16 @@ const SHARED_COPY: Record<ReportLang, SharedCopy> = {
     ctaButton: "Scan with mySeo",
   },
 };
+
+function shortUrl(url: string): string {
+  try {
+    const u = new URL(url);
+    const path = `${u.pathname}${u.search}`;
+    return path === "/" ? u.host : `${u.host}${path}`;
+  } catch {
+    return url;
+  }
+}
 
 function esc(value: unknown): string {
   return String(value).replace(
@@ -118,7 +137,29 @@ function gaugeSvg(score: number): string {
   </svg>`;
 }
 
-function problemsHtml(report: HealthReport, t: SharedCopy): string {
+function affectedHtml(
+  p: HealthReport["topProblems"][number],
+  t: SharedCopy,
+): string {
+  const pages = p.examplePages ?? [];
+  if (pages.length === 0) return "";
+  const items = pages
+    .map(
+      (url) =>
+        `<li><a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(shortUrl(url))}</a></li>`,
+    )
+    .join("");
+  const remaining = p.affectedPages - pages.length;
+  const more =
+    remaining > 0 ? `<p class="more">${esc(t.moreCount(remaining))}</p>` : "";
+  return `<div class="affected"><span class="lbl">${t.affectedPagesLabel}</span><ul>${items}</ul>${more}</div>`;
+}
+
+function problemsHtml(
+  report: HealthReport,
+  t: SharedCopy,
+  origin: string,
+): string {
   if (report.topProblems.length === 0) {
     return `<div class="card ok">
       <h2>${t.noIssuesTitle}</h2>
@@ -137,6 +178,8 @@ function problemsHtml(report: HealthReport, t: SharedCopy): string {
           <div><span class="lbl">${t.whatItMeans}</span><p>${esc(p.whatItMeans)}</p></div>
           <div><span class="lbl">${t.howToFix}</span><p>${esc(p.howToFix)}</p></div>
         </div>
+        ${affectedHtml(p, t)}
+        <a class="guide-link" href="${origin}/rehber#${esc(p.issueType)}">${t.detailedGuide}</a>
       </article>`,
     )
     .join("");
@@ -218,6 +261,14 @@ export function renderSharedReportHtml(input: {
   .pgrid > div{background:#0a0d13;border-radius:12px;padding:14px}
   .lbl{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#8b95a3;font-weight:700;margin-bottom:4px}
   .pgrid p{font-size:14px;color:#c3cbd6}
+  .affected{background:#0a0d13;border-radius:12px;padding:14px;margin-top:12px}
+  .affected ul{list-style:none;margin-top:8px;display:flex;flex-direction:column;gap:4px}
+  .affected li{font-size:13px;color:#c3cbd6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .affected li a{color:#c3cbd6;text-decoration:none}
+  .affected li a:hover{text-decoration:underline}
+  .affected .more{font-size:12px;color:#8b95a3;margin-top:6px}
+  .guide-link{display:inline-block;margin-top:14px;color:#35c6f4;font-size:14px;font-weight:600;text-decoration:none}
+  .guide-link:hover{text-decoration:underline}
   .plan{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
   .week{background:#0e1219;border:1px solid #232a36;border-radius:14px;padding:16px}
   .week h4{font-size:14px;color:#8b95a3;margin-bottom:8px}
@@ -255,7 +306,7 @@ export function renderSharedReportHtml(input: {
       </div>
     </div>
 
-    ${problemsHtml(report, t)}
+    ${problemsHtml(report, t, origin)}
     ${planHtml(report, t)}
 
     <div class="cta no-print">

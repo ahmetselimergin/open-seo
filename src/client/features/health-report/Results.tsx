@@ -17,6 +17,7 @@ import {
   MonitorCard,
   ShareButton,
 } from "@/client/features/health-report/reportActions";
+import { ActionPlanSection } from "@/client/features/health-report/ResultsPlan";
 
 export function Results({
   report,
@@ -224,8 +225,63 @@ function ProblemCard({
           <Detail title={t.whatItMeans} body={problem.whatItMeans} />
           <Detail title={t.howToFix} body={problem.howToFix} />
         </div>
+        {problem.examplePages.length > 0 && (
+          <AffectedPages problem={problem} t={t} />
+        )}
+        <a
+          href={`/rehber#${problem.issueType}`}
+          className="hr-accent w-fit text-sm font-medium hover:underline"
+        >
+          {t.detailedGuide}
+        </a>
       </div>
     </article>
+  );
+}
+
+function shortUrl(url: string): string {
+  try {
+    const u = new URL(url);
+    const path = `${u.pathname}${u.search}`;
+    return path === "/" ? u.host : `${u.host}${path}`;
+  } catch {
+    return url;
+  }
+}
+
+function AffectedPages({
+  problem,
+  t,
+}: {
+  problem: HealthReport["topProblems"][number];
+  t: ResultsCopy;
+}) {
+  const remaining = problem.affectedPages - problem.examplePages.length;
+  return (
+    <div className="rounded-xl bg-base-200/60 p-4">
+      <p className="text-xs font-semibold uppercase tracking-wide text-base-content/50">
+        {t.affectedPagesLabel}
+      </p>
+      <ul className="mt-2 flex flex-col gap-1">
+        {problem.examplePages.map((url) => (
+          <li key={url} className="truncate text-sm text-base-content/70">
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-base-content hover:underline"
+            >
+              {shortUrl(url)}
+            </a>
+          </li>
+        ))}
+      </ul>
+      {remaining > 0 && (
+        <p className="mt-1 text-xs text-base-content/45">
+          {t.moreCount(remaining)}
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -236,124 +292,6 @@ function Detail({ title, body }: { title: string; body: string }) {
         {title}
       </p>
       <p className="mt-1 text-sm text-base-content/75">{body}</p>
-    </div>
-  );
-}
-
-type PlanItem = HealthReport["actionPlan"][number];
-
-function ActionPlanSection({
-  report,
-  t,
-}: {
-  report: HealthReport;
-  t: ResultsCopy;
-}) {
-  const [done, setDone] = React.useState<Set<number>>(new Set());
-  const toggle = (i: number) =>
-    setDone((prev) => {
-      const next = new Set(prev);
-      if (next.has(i)) next.delete(i);
-      else next.add(i);
-      return next;
-    });
-
-  const total = report.actionPlan.length;
-  const pct = total === 0 ? 0 : Math.round((done.size / total) * 100);
-  const weeks = [1, 2, 3, 4];
-
-  return (
-    <section
-      className="hr-in flex flex-col gap-4"
-      style={{ animationDelay: "180ms" }}
-    >
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <h2 className="text-2xl font-bold tracking-tight">{t.planHeading}</h2>
-        <span className="text-sm font-medium text-base-content/50">
-          {t.completed(done.size, total)}
-        </span>
-      </div>
-
-      <div className="h-2 w-full overflow-hidden rounded-full bg-base-300">
-        <div
-          className="h-full rounded-full transition-all duration-500"
-          style={{ width: `${pct}%`, background: "var(--hr-accent)" }}
-        />
-      </div>
-
-      <div className="relative mt-2 flex flex-col gap-4 border-l-2 border-base-300 pl-6">
-        {weeks.map((week) => {
-          const items = report.actionPlan
-            .map((item, index) => ({ item, index }))
-            .filter(({ item }) => item.week === week);
-          if (items.length === 0) return null;
-          return (
-            <WeekBlock
-              key={week}
-              week={week}
-              items={items}
-              done={done}
-              onToggle={toggle}
-              t={t}
-            />
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
-function WeekBlock({
-  week,
-  items,
-  done,
-  onToggle,
-  t,
-}: {
-  week: number;
-  items: { item: PlanItem; index: number }[];
-  done: Set<number>;
-  onToggle: (i: number) => void;
-  t: ResultsCopy;
-}) {
-  return (
-    <div className="relative">
-      <span
-        className="absolute -left-[31px] top-1 grid size-5 place-items-center rounded-full border-2 bg-base-100 text-[10px] font-bold"
-        style={{ borderColor: "var(--hr-accent)", color: "var(--hr-accent)" }}
-      >
-        {week}
-      </span>
-      <h3 className="mb-2 text-sm font-semibold text-base-content/60">
-        {t.weekLabel(week)}
-      </h3>
-      <div className="flex flex-col divide-y divide-base-200 overflow-hidden rounded-2xl border border-base-300 bg-base-100">
-        {items.map(({ item, index }) => {
-          const checked = done.has(index);
-          return (
-            <label
-              key={index}
-              className="flex cursor-pointer items-start gap-3 px-4 py-3 transition-colors hover:bg-base-200/50"
-            >
-              <input
-                type="checkbox"
-                className="checkbox checkbox-sm mt-0.5"
-                checked={checked}
-                onChange={() => onToggle(index)}
-              />
-              <span
-                className={
-                  checked
-                    ? "text-sm text-base-content/40 line-through"
-                    : "text-sm text-base-content/80"
-                }
-              >
-                {item.task}
-              </span>
-            </label>
-          );
-        })}
-      </div>
     </div>
   );
 }
